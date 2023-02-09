@@ -29,12 +29,16 @@ export default function ProductCart(props: ProductCartProps) {
 
 	createEffect(() => setQuantity(getCartItemQuantityByProductId(props.id)));
 
+	const getLengthQuantity = () => quantity().toString().length;
+
+	const inputWidth = () =>
+		getLengthQuantity() === 1 ? "32" : getLengthQuantity() === 2 ? "42" : "52";
+
 	return (
 		<>
 			<Switch
 				fallback={
 					<button
-						// disabled={increasing.find((msg) => msg.input)?.input ? true : false}
 						onClick={() => handleIncreaseCartItem(props.id)}
 						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
 					>
@@ -93,14 +97,9 @@ export default function ProductCart(props: ProductCartProps) {
 								disabled={quantity() !== 1 ? false : true}
 								onClick={() => {
 									batch(() => {
-										// setCartItems(
-										// 	(item) => item.productId === props.id,
-										// 	produce((item) => (item.quantity = item.quantity - 1))
-										// );
 										setQuantity((q) => q - 1);
 										setIsLoading(true);
 									});
-									// debouncedDecrementUpdate(props.id, );
 									debouncedUpdate();
 								}}
 								onKeyUp={(e) => {
@@ -123,18 +122,19 @@ export default function ProductCart(props: ProductCartProps) {
 							</button>
 
 							<input
-								class='custom-input-number text-center flex items-center justify-center'
+								class={`custom-input-number text-center flex items-center justify-center `}
 								value={quantity()}
+								style={{
+									width: `${inputWidth()}px`,
+								}}
 								onInput={(e) => {
+									if (parseInt(e.currentTarget.value) >= props.stock) {
+										e.currentTarget.value = props.stock.toString();
+									}
 									batch(() => {
-										// setCartItems(
-										// 	(item) => item.productId === props.id,
-										// 	produce((item) => (item.quantity = parseInt(e.currentTarget.value)))
-										// );
 										setQuantity(parseInt(e.currentTarget.value));
 										setIsLoading(true);
 									});
-									// debouncedInputUpdate(props.id, );
 									debouncedUpdate();
 								}}
 								onKeyUp={(e) => {
@@ -150,21 +150,12 @@ export default function ProductCart(props: ProductCartProps) {
 							/>
 
 							<button
-								disabled={
-									cartItems?.find((item) => item.productId === props.id)?.quantity === props.stock
-										? true
-										: false
-								}
+								disabled={quantity() === props.stock ? true : false}
 								onClick={() => {
 									batch(() => {
-										// setCartItems(
-										// 	(item) => item.productId === props.id,
-										// 	produce((item) => (item.quantity = item.quantity + 1))
-										// );
 										setQuantity((q) => q + 1);
 										setIsLoading(true);
 									});
-									// debouncedIncrementUpdate(props.id, );
 									debouncedUpdate();
 								}}
 								onKeyUp={(e) => {
@@ -194,7 +185,6 @@ export default function ProductCart(props: ProductCartProps) {
 					}
 				>
 					<button
-						// disabled={increasing.find((msg) => msg.input)?.input ? true : false}
 						onClick={() => handleIncreaseCartItem(props.id)}
 						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
 					>
