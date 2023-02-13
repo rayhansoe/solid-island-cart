@@ -1,8 +1,8 @@
 import type { RouteDataArgs } from "solid-start";
 import { createServerData$ } from "solid-start/server";
 import type { prismaType } from "~/types";
+import { prisma } from "~/server/db/client";
 import { getCartItems, getTotalPrice } from "./CartServices";
-import { prisma } from ".";
 
 type Params = RouteDataArgs["params"];
 
