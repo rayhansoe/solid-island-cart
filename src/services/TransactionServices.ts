@@ -24,7 +24,7 @@ export const createTransaction = async (prisma: prismaType) => {
 
 // Create Transaction Item
 export const createTransactionItem = async (prisma: prismaType, transactionId: string) => {
-	const cartItems = await prisma.cartItem.findMany();
+	const cartItems = await getCartItems(prisma);
 
 	const arrQuery = cartItems.map((item) =>
 		prisma.transactionItem.create({

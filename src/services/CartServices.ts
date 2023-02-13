@@ -46,11 +46,11 @@ export const getCartItems = async (prisma: prismaType) => {
 };
 
 // get CartItems Raw
-export const getCartItemsRaw = async (prisma: prismaType) => {
-	const cartItems = await prisma.cartItem.findMany();
+// export const getCartItemsRaw = async (prisma: prismaType) => {
+// 	const cartItems = await prisma.cartItem.findMany();
 
-	return cartItems;
-};
+// 	return cartItems;
+// };
 
 // get CartItems with Server Data Server Function
 export const getServerCartItemsData$ = () =>
@@ -71,7 +71,7 @@ export const getServerCartItemsData$ = () =>
 export const getServerCartItemsDataRaw$ = () =>
 	createServerData$(
 		async () => {
-			const cartItems = await prisma.cartItem.findMany();
+			const cartItems = await getCartItems(prisma);
 
 			return cartItems;
 		},
