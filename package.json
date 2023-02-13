@@ -15,6 +15,7 @@
 	"type": "module",
 	"devDependencies": {
 		"@types/node": "^18.11.18",
+		"@types/nprogress": "^0.2.0",
 		"@typescript-eslint/eslint-plugin": "^5.42.1",
 		"@typescript-eslint/parser": "^5.42.1",
 		"autoprefixer": "^10.4.13",
@@ -36,6 +37,7 @@
 		"@solid-primitives/scheduled": "^1.2.1",
 		"@solidjs/meta": "^0.28.2",
 		"@solidjs/router": "^0.7.0",
+		"nprogress": "^0.2.0",
 		"solid-js": "^1.6.10",
 		"solid-start": "^0.2.20",
 		"undici": "^5.15.1",

@@ -1,3 +1,4 @@
+import type { Setter } from "solid-js";
 import { batch, createRoot, createSignal } from "solid-js";
 import { createStore, reconcile } from "solid-js/store";
 import server$ from "solid-start/server";
@@ -24,6 +25,7 @@ function createCartContext() {
 	const [cartItems, setCartItems] = createStore<CartItemProps[]>(data || []);
 	const [isLoading, setIsLoading] = createSignal<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = createSignal<boolean>(false);
+	const [isIncreasing, setIsIncreasing] = createSignal<boolean>(false);
 
 	const increaseCartItem$ = server$(async (productId: string) => {
 		try {
@@ -230,8 +232,9 @@ function createCartContext() {
 		}
 	});
 
-	const handleIncreaseCartItem = async (productId: string) => {
+	const handleIncreaseCartItem = async (productId: string, setIsIncreasing: Setter<boolean>) => {
 		setIsSubmitting(true);
+		setIsIncreasing(true);
 		const response = await increaseCartItem$(productId);
 
 		// Fail to increase item
@@ -239,6 +242,7 @@ function createCartContext() {
 			batch(() => {
 				setIsLoading(false);
 				setIsSubmitting(false);
+				setIsIncreasing(false);
 			});
 			return;
 		}
@@ -247,6 +251,7 @@ function createCartContext() {
 			setCartItems(reconcile(response));
 			setIsLoading(false);
 			setIsSubmitting(false);
+			setIsIncreasing(false);
 		});
 
 		return;
@@ -273,7 +278,7 @@ function createCartContext() {
 		return;
 	};
 
-	const handleRemoveCartItem = async (productId: string) => {
+	const handleRemoveCartItem = async (productId: string, setIsRemoving: Setter<boolean>) => {
 		setIsSubmitting(true);
 		const response = await removeFromCartItem$(productId);
 
@@ -282,6 +287,7 @@ function createCartContext() {
 			batch(() => {
 				setIsLoading(false);
 				setIsSubmitting(false);
+				setIsRemoving(false);
 			});
 			return;
 		}
@@ -290,6 +296,7 @@ function createCartContext() {
 			setCartItems(reconcile(response));
 			setIsLoading(false);
 			setIsSubmitting(false);
+			setIsRemoving(false);
 		});
 
 		return;
@@ -362,8 +369,10 @@ function createCartContext() {
 		cartItems,
 		isLoading,
 		isSubmitting,
+		isIncreasing,
 		setCartItems,
 		setIsSubmitting,
+		setIsIncreasing,
 		setIsLoading,
 		handleIncreaseCartItem,
 		handleDecreaseCartItem,

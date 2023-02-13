@@ -2,18 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-	.cart-button:hover {
-		@apply bg-blue-500 border-blue-300;
-		svg {
-			@apply text-white;
-		}
+/* Make clicks pass-through */
+#nprogress {
+	pointer-events: none;
+}
+
+#nprogress .bar {
+	--tw-bg-opacity: 1;
+	background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+	/* background: #27c4f5 linear-gradient(to right, #27c4f5, #a307ba, #fd8d32, #70c050, #27c4f5); */
+	background-size: 500%;
+	animation: 2s linear infinite barprogress, 0.3s fadein;
+
+	position: fixed;
+	z-index: 1031;
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 3px;
+}
+
+/* Fancy blur effect */
+#nprogress .peg {
+	display: block;
+	position: absolute;
+	right: 0px;
+	width: 100px;
+	height: 100%;
+	box-shadow: 0 0 10px #29d, 0 0 5px #29d;
+	opacity: 1;
+
+	-webkit-transform: rotate(3deg) translate(0px, -4px);
+	-ms-transform: rotate(3deg) translate(0px, -4px);
+	transform: rotate(3deg) translate(0px, -4px);
+}
+
+/* Remove these to get rid of the spinner */
+#nprogress .spinner {
+	display: block;
+	position: fixed;
+	z-index: 1031;
+	top: 15px;
+	right: 15px;
+}
+
+.nprogress-custom-parent {
+	overflow: hidden;
+	position: relative;
+}
+
+.nprogress-custom-parent #nprogress .spinner,
+.nprogress-custom-parent #nprogress .bar {
+	position: absolute;
+}
+
+@keyframes barprogress {
+	0% {
+		background-position: 0% 0;
+	}
+	to {
+		background-position: 125% 0;
+	}
+}
+
+@layer base {
+	*::-webkit-scrollbar {
+		width: 14px;
 	}
 
-	.cart-button:active {
-		@apply bg-blue-400 border-blue-200;
-		svg {
-			@apply text-white;
+	*::-webkit-scrollbar-track {
+		border-radius: 8px;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		height: 56px;
+		border-radius: 8px;
+		border: 4px solid transparent;
+		background-clip: content-box;
+		background-color: #888;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		background-color: #555;
+	}
+
+	/* The key is to start <details> element in the "open" state...
+		...and animate its max-height value by toggling a checkbox. */
+	details {
+		box-sizing: border-box;
+		transition: max-height 1000ms ease-out;
+
+		max-height: 174px; /* Set a max-height value just enough to show the summary content */
+		overflow: hidden; /* Hide the rest of the content */
+	}
+
+	/* Here you can choose two approaches to animate <details> element:
+		1) Use adjacent sibling combinator (+)
+		2) Use :has() pseudo-class, but this might not work in Firefox.
+	*/
+
+	input:checked + details,
+	details:has(input:checked) {
+		max-height: 2000px; /* Set a max-height value enough to show all the content */
+	}
+}
+
+@layer components {
+	.cart-button {
+		&:hover {
+			@apply bg-blue-500 border-blue-300;
+			svg {
+				@apply text-white;
+			}
+		}
+
+		&:active {
+			@apply bg-blue-400 border-blue-200;
+			svg {
+				@apply text-white;
+			}
 		}
 	}
 
@@ -30,6 +138,19 @@
 	.parent-island {
 		solid-island {
 			@apply w-full;
+		}
+	}
+
+	.parent-children {
+		solid-children {
+			@apply w-full;
+		}
+	}
+
+	.custom-details {
+		@apply p-4;
+		summary {
+			@apply shadow-md rounded p-4 list-none;
 		}
 	}
 }

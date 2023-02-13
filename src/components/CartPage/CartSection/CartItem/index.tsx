@@ -7,9 +7,9 @@ import type { CartItemProps } from "~/types";
 import { formatCurrency } from "~/utilities/formatCurrency";
 
 export default function CartItem(props: CartItemProps) {
+	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
 	const [quantity, setQuantity] = createSignal<number>(props?.quantity || 0);
 	const {
-		cartItems,
 		setCartItems,
 		setIsLoading,
 		handleRemoveCartItem,
@@ -31,10 +31,16 @@ export default function CartItem(props: CartItemProps) {
 			setQuantity(props?.quantity);
 		}
 	});
+
+	const getLengthQuantity = () => quantity().toString().length;
+
+	const inputWidth = () =>
+		getLengthQuantity() === 1 ? "32" : getLengthQuantity() === 2 ? "42" : "52";
+
 	return (
 		<>
 			<div class='flex flex-col'>
-				<li class='flex justify-between gap-2 p-3 w-full sm:gap-4'>
+				<li class='flex justify-between gap-2 py-3 w-full sm:gap-4'>
 					{/* Product Image */}
 					<img
 						class='w-2/5 h-28 object-cover rounded sm:h-32'
@@ -46,13 +52,12 @@ export default function CartItem(props: CartItemProps) {
 						{/* top side */}
 						<div class='flex w-full h-min justify-between'>
 							{/* Left Side */}
-							<div class='flex flex-col sm:gap-3'>
+							<div class='flex flex-col w-1/2 sm:gap-3 lg:w-2/3'>
 								<span class='flex items-center gap-1 font-medium sm:text-xl'>
 									{/* Product Name */}
-									{products?.find((product) => product.id === props?.productId)?.name}
-									<Show when={props?.quantity > 1}>
-										<span class='text-xs text-gray-600 ml-1 sm:text-sm sm:ml-0'>{`x ${quantity()}`}</span>
-									</Show>
+									<p class='truncate'>
+										{products?.find((product) => product.id === props?.productId)?.name}
+									</p>
 								</span>
 								{/* Product Price */}
 								<span class='text-sm text-gray-600 sm:text-base'>
@@ -75,15 +80,17 @@ export default function CartItem(props: CartItemProps) {
 						<div class='flex'>
 							<Show when={props?.quantity}>
 								<div class='flex items-center gap-2 mb-2'>
+									{/* Remove Button */}
 									<button
+										disabled={isRemoving() ? true : false}
 										onClick={() => {
-											handleRemoveCartItem(props?.productId);
+											handleRemoveCartItem(props?.productId, setIsRemoving);
 											batch(() => {
 												setIsLoading(true);
 												setCartItems((items) => items.filter((item) => item.id !== props?.id));
 											});
 										}}
-										class='flex items-center justify-center text-gray-400 hover:text-red-400 group'
+										class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:hover:text-gray-400 disabled:text-gray-400'
 									>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
@@ -91,7 +98,7 @@ export default function CartItem(props: CartItemProps) {
 											viewBox='0 0 24 24'
 											stroke-width='1.5'
 											stroke='currentColor'
-											class='relative inline-flex w-4 h-4 sm:w-6 sm:h-6'
+											class='relative inline-flex w-5 h-5 sm:w-6 sm:h-6'
 										>
 											<path
 												stroke-linecap='round'
@@ -105,7 +112,7 @@ export default function CartItem(props: CartItemProps) {
 											viewBox='0 0 24 24'
 											stroke-width='1.5'
 											stroke='currentColor'
-											class='hidden opacity-60 w-4 h-4 group-hover:absolute group-hover:inline-flex group-hover:animate-ping sm:w-6 sm:h-6'
+											class='hidden opacity-60 w-5 h-5 group-hover:absolute group-hover:inline-flex group-hover:animate-ping sm:w-6 sm:h-6'
 										>
 											<path
 												stroke-linecap='round'
@@ -116,14 +123,11 @@ export default function CartItem(props: CartItemProps) {
 									</button>
 									<span class='h-5 w-[1px] bg-gray-300' />
 									<div class='flex items-center gap-2'>
+										{/* Decrease Button */}
 										<button
 											disabled={quantity() === 1 ? true : false}
 											onClick={() => {
 												batch(() => {
-													// setCartItems(
-													// 	(item) => item.id === props?.id,
-													// 	produce((item) => (item.quantity = item.quantity - 1))
-													// );
 													setQuantity((q) => q - 1);
 													setIsLoading(true);
 												});
@@ -132,7 +136,7 @@ export default function CartItem(props: CartItemProps) {
 											onKeyUp={(e) => {
 												e.preventDefault();
 											}}
-											class='flex items-center justify-center rounded-full w-5 h-5 bg-red-300 text-xl font-bold text-white hover:bg-red-400 active:bg-red-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed sm:w-7 sm:h-7'
+											class='flex items-center justify-center rounded-full w-6 h-6 bg-red-300 text-xl font-bold text-white hover:bg-red-400 active:bg-red-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed sm:w-7 sm:h-7'
 										>
 											<svg
 												xmlns='http://www.w3.org/2000/svg'
@@ -148,15 +152,18 @@ export default function CartItem(props: CartItemProps) {
 											</svg>
 										</button>
 
+										{/* Input Quantity */}
 										<input
-											class='custom-input-number text-xs text-center flex items-center justify-center sm:text-lg'
+											class='custom-input-number text-sm text-center flex items-center justify-center sm:text-lg'
+											style={{
+												width: `${inputWidth()}px`,
+											}}
 											value={quantity()}
 											onInput={(e) => {
+												if (parseInt(e.currentTarget.value) >= quantity()) {
+													e.currentTarget.value = quantity().toString();
+												}
 												batch(() => {
-													// setCartItems(
-													// 	(item) => item.id === props?.id,
-													// 	produce((item) => (item.quantity = parseInt(e.currentTarget.value)))
-													// );
 													setQuantity(parseInt(e.currentTarget.value));
 													setIsLoading(true);
 												});
@@ -171,19 +178,16 @@ export default function CartItem(props: CartItemProps) {
 											max={products?.find((product) => product.id === props?.productId)?.stock || 0}
 										/>
 
+										{/* Increase Button */}
 										<button
 											disabled={
-												cartItems?.find((item) => props?.productId === item.id)?.quantity ===
+												quantity() ===
 												products?.find((product) => product.id === props?.productId)?.stock
 													? true
 													: false
 											}
 											onClick={() => {
 												batch(() => {
-													// setCartItems(
-													// 	(item) => item.id === props?.id,
-													// 	produce((item) => (item.quantity = item.quantity + 1))
-													// );
 													setQuantity((q) => q + 1);
 													setIsLoading(true);
 												});
@@ -192,7 +196,7 @@ export default function CartItem(props: CartItemProps) {
 											onKeyUp={(e) => {
 												e.preventDefault();
 											}}
-											class='flex items-center justify-center rounded-full w-5 h-5 bg-blue-500 text-xl font-bold text-white hover:bg-blue-400 active:bg-blue-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed sm:w-7 sm:h-7'
+											class='flex items-center justify-center rounded-full w-6 h-6 bg-blue-500 text-xl font-bold text-white hover:bg-blue-400 active:bg-blue-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed sm:w-7 sm:h-7'
 										>
 											<svg
 												xmlns='http://www.w3.org/2000/svg'

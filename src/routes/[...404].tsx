@@ -20,6 +20,10 @@ const NotFound: VoidComponent = () => {
 				<A href='/cart' class='text-sky-600 hover:underline'>
 					Cart Page
 				</A>
+				{" - "}
+				<A href='/transaction' class='text-sky-600 hover:underline'>
+					Transaction Page
+				</A>
 			</p>
 		</main>
 	);

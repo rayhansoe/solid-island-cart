@@ -15,10 +15,6 @@ export default function CartList() {
 		animationParent && autoAnimate(animationParent);
 	});
 
-	createEffect(() => {
-		console.log(cartItems);
-	});
-
 	return (
 		<Show when={cartItems?.length}>
 			<ul ref={animationParent} class='parent-island container flex flex-col w-full '>

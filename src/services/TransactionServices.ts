@@ -2,7 +2,7 @@ import type { RouteDataArgs } from "solid-start";
 import server$, { createServerData$ } from "solid-start/server";
 import { prisma } from "~/server/db/client";
 import type { prismaType } from "~/types";
-import { getCartItems$, getTotalPrice$ } from "./CartServices";
+import { getCartItems, getCartItems$, getTotalPrice } from "./CartServices";
 
 type Params = RouteDataArgs["params"];
 
@@ -10,9 +10,11 @@ type Params = RouteDataArgs["params"];
 
 // Create Transaction
 export const createTransaction = async (prisma: prismaType) => {
-	const totalPrice = await getTotalPrice$();
+	const cartItems = await getCartItems(prisma);
+	const totalPrice = await getTotalPrice(prisma);
 	return await prisma.transaction.create({
 		data: {
+			quantities: cartItems.length,
 			totalPrice,
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -22,9 +24,11 @@ export const createTransaction = async (prisma: prismaType) => {
 
 // Create Transaction Server Function
 export const createTransaction$ = server$(async () => {
-	const totalPrice = await getTotalPrice$();
+	const cartItems = await prisma.cartItem.findMany();
+	const totalPrice = await getTotalPrice(prisma);
 	return await prisma.transaction.create({
 		data: {
+			quantities: cartItems.length,
 			totalPrice,
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -47,18 +51,6 @@ export const createTransactionItem = async (prisma: prismaType, transactionId: s
 			},
 		})
 	);
-
-	// cartItems.forEach(async (item) => {
-	// 	await prisma.transactionItem.create({
-	// 		data: {
-	// 			createdAt: new Date(),
-	// 			updatedAt: new Date(),
-	// 			quantity: item.quantity,
-	// 			productId: item.productId,
-	// 			transactionId,
-	// 		},
-	// 	});
-	// });
 
 	return await prisma.$transaction(arrQuery);
 };

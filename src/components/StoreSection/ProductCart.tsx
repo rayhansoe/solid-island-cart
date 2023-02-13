@@ -2,6 +2,7 @@
 import { debounce } from "@solid-primitives/scheduled";
 import { batch, createEffect, createSignal, Match, Switch } from "solid-js";
 import CartContext from "~/context/CartContext";
+import ProductContext from "~/context/ProductContext";
 
 type ProductCartProps = {
 	id: string;
@@ -9,6 +10,9 @@ type ProductCartProps = {
 };
 
 export default function ProductCart(props: ProductCartProps) {
+	const [isIncreasing, setIsIncreasing] = createSignal<boolean>(false);
+	const [isReStocking, setIsReStocking] = createSignal<boolean>(false);
+	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
 	const {
 		cartItems,
 		getCartItemQuantityByProductId,
@@ -18,6 +22,8 @@ export default function ProductCart(props: ProductCartProps) {
 		handleRemoveCartItem,
 		handleSetCartItemQuantityByProductId,
 	} = CartContext;
+
+	const { handleReStockProduct, getProductClient } = ProductContext;
 
 	const [quantity, setQuantity] = createSignal<number>(getCartItemQuantityByProductId(props.id));
 
@@ -36,31 +42,33 @@ export default function ProductCart(props: ProductCartProps) {
 
 	return (
 		<>
-			<Switch
-				fallback={
+			<Switch fallback={<h1>asd</h1>}>
+				<Match when={!getProductClient(props.id)?.stock}>
 					<button
-						onClick={() => handleIncreaseCartItem(props.id)}
+						disabled={isReStocking() ? true : false}
+						onClick={() => handleReStockProduct(props.id, setIsReStocking)}
 						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
 					>
-						+Add to Cart
+						+Restock
 					</button>
-				}
-			>
+				</Match>
 				<Match
 					when={
-						cartItems?.length && cartItems?.find((item) => item.productId === props.id)?.quantity
+						getProductClient(props.id)?.stock &&
+						cartItems?.find((item) => item.productId === props.id)?.quantity
 					}
 				>
 					<div class='flex items-center gap-2 h-10'>
 						<button
+							disabled={isRemoving() ? true : false}
 							onClick={() => {
-								handleRemoveCartItem(props.id);
+								handleRemoveCartItem(props.id, setIsRemoving);
 								batch(() => {
 									setIsLoading(true);
 									setCartItems((items) => items.filter((item) => item.productId !== props.id));
 								});
 							}}
-							class='flex items-center justify-center text-gray-400 hover:text-red-400 group'
+							class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:text-gray-400 disabled:hover:text-gray-400'
 						>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
@@ -146,11 +154,11 @@ export default function ProductCart(props: ProductCartProps) {
 								}
 								type='number'
 								min={1}
-								max={props.stock}
+								max={getProductClient(props.id)?.stock}
 							/>
 
 							<button
-								disabled={quantity() === props.stock ? true : false}
+								disabled={quantity() === getProductClient(props.id)?.stock ? true : false}
 								onClick={() => {
 									batch(() => {
 										setQuantity((q) => q + 1);
@@ -179,13 +187,13 @@ export default function ProductCart(props: ProductCartProps) {
 						</div>
 					</div>
 				</Match>
-				<Match
-					when={
-						!cartItems?.length && !cartItems?.find((item) => item.productId === props.id)?.quantity
-					}
-				>
+				<Match when={getProductClient(props.id)?.stock}>
 					<button
-						onClick={() => handleIncreaseCartItem(props.id)}
+						disabled={isIncreasing() ? true : false}
+						onClick={() => {
+							setIsIncreasing(true);
+							handleIncreaseCartItem(props.id, setIsIncreasing);
+						}}
 						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
 					>
 						+Add to Cart
