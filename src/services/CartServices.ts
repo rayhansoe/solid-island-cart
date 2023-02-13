@@ -45,13 +45,6 @@ export const getCartItems = async (prisma: prismaType) => {
 	return cartItems;
 };
 
-// get CartItems Raw
-// export const getCartItemsRaw = async (prisma: prismaType) => {
-// 	const cartItems = await prisma.cartItem.findMany();
-
-// 	return cartItems;
-// };
-
 // get CartItems with Server Data Server Function
 export const getServerCartItemsData$ = () =>
 	createServerData$(
