@@ -28,7 +28,7 @@ const App: VoidComponent = () => {
 						<div class='flex items-center gap-2'>
 							<h1 class='text-3xl font-semibold p-3'>Store</h1>
 						</div>
-						<StoreSection />
+						<StoreSection cartItems={cartItems()} products={products()} />
 					</main>
 				</AppProvider>
 			</Show>

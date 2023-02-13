@@ -3,10 +3,12 @@ import { debounce } from "@solid-primitives/scheduled";
 import { batch, createEffect, createSignal, Match, Switch } from "solid-js";
 import CartContext from "~/context/CartContext";
 import ProductContext from "~/context/ProductContext";
+import type { CartItemProps } from "~/types";
 
 type ProductCartProps = {
 	id: string;
 	stock: number;
+	serverCartItems: CartItemProps[];
 };
 
 export default function ProductCart(props: ProductCartProps) {
@@ -42,8 +44,8 @@ export default function ProductCart(props: ProductCartProps) {
 
 	return (
 		<>
-			<Switch fallback={<h1>asd</h1>}>
-				<Match when={!getProductClient(props.id)?.stock}>
+			<Switch>
+				<Match when={!props.stock}>
 					<button
 						disabled={isReStocking() ? true : false}
 						onClick={() => handleReStockProduct(props.id, setIsReStocking)}
@@ -54,8 +56,9 @@ export default function ProductCart(props: ProductCartProps) {
 				</Match>
 				<Match
 					when={
-						getProductClient(props.id)?.stock &&
-						cartItems?.find((item) => item.productId === props.id)?.quantity
+						(props.serverCartItems?.find((item) => item.productId === props.id)?.quantity ||
+							cartItems?.find((item) => item.productId === props.id)?.quantity) &&
+						(props.stock || getProductClient(props.id)?.stock)
 					}
 				>
 					<div class='flex items-center gap-2 h-10'>
@@ -149,12 +152,15 @@ export default function ProductCart(props: ProductCartProps) {
 									e.preventDefault();
 								}}
 								size={
-									String(cartItems?.find((item) => item.productId === props.id)?.quantity || 0)
-										.length
+									String(
+										props.serverCartItems?.find((item) => item.productId === props.id)?.quantity ||
+											cartItems?.find((item) => item.productId === props.id)?.quantity ||
+											0
+									).length
 								}
 								type='number'
 								min={1}
-								max={getProductClient(props.id)?.stock}
+								max={props.stock || getProductClient(props.id)?.stock}
 							/>
 
 							<button
@@ -187,7 +193,7 @@ export default function ProductCart(props: ProductCartProps) {
 						</div>
 					</div>
 				</Match>
-				<Match when={getProductClient(props.id)?.stock}>
+				<Match when={props.stock || getProductClient(props.id)?.stock}>
 					<button
 						disabled={isIncreasing() ? true : false}
 						onClick={() => {

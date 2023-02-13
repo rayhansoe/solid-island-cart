@@ -8,7 +8,7 @@ import {
 	getCartItem,
 	getCartItemByProductId,
 	getCartItems,
-	getCartItems$ as getCartItemsRPC$,
+	// getCartItems$ as getCartItemsRPC$,
 	increaseCartItem,
 	removeCartItem,
 	setCartItemQuantity,
@@ -18,11 +18,11 @@ import type { CartItemProps } from "~/types";
 import productContext from "./ProductContext";
 import { prisma } from "~/server/db/client";
 
-const data: CartItemProps[] = await getCartItemsRPC$();
+// const data: CartItemProps[] = await getCartItemsRPC$();
 
 function createCartContext() {
 	const { getProductClient } = productContext;
-	const [cartItems, setCartItems] = createStore<CartItemProps[]>(data || []);
+	const [cartItems, setCartItems] = createStore<CartItemProps[]>([]);
 	const [isLoading, setIsLoading] = createSignal<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = createSignal<boolean>(false);
 	const [isIncreasing, setIsIncreasing] = createSignal<boolean>(false);
