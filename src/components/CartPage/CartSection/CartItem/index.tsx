@@ -3,12 +3,15 @@ import { debounce } from "@solid-primitives/scheduled";
 import { batch, createEffect, createSignal, Show } from "solid-js";
 import CartContext from "~/context/CartContext";
 import ProductContext from "~/context/ProductContext";
-import type { CartItemProps } from "~/types";
+import type { CartItemProps, ProductProps } from "~/types";
 import { formatCurrency } from "~/utilities/formatCurrency";
 
-export default function CartItem(props: CartItemProps) {
+export default function CartItem(props: {
+	cartItemProps: CartItemProps;
+	products: ProductProps[];
+}) {
 	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
-	const [quantity, setQuantity] = createSignal<number>(props?.quantity || 0);
+	const [quantity, setQuantity] = createSignal<number>(props?.cartItemProps.quantity || 0);
 	const {
 		setCartItems,
 		setIsLoading,
@@ -19,16 +22,16 @@ export default function CartItem(props: CartItemProps) {
 	const { products } = ProductContext;
 
 	const update = () => {
-		if (props?.id && quantity()) {
-			handleSetCartItemQuantityByCartItemId(props?.id, quantity());
+		if (props?.cartItemProps.id && quantity()) {
+			handleSetCartItemQuantityByCartItemId(props?.cartItemProps.id, quantity());
 		}
 	};
 
 	const debouncedUpdate = debounce(update, 1000);
 
 	createEffect(() => {
-		if (props?.quantity) {
-			setQuantity(props?.quantity);
+		if (props?.cartItemProps.quantity) {
+			setQuantity(props?.cartItemProps.quantity);
 		}
 	});
 
@@ -45,8 +48,16 @@ export default function CartItem(props: CartItemProps) {
 					<img
 						class='w-2/5 h-28 object-cover rounded sm:h-32'
 						loading='lazy'
-						src={products?.find((product) => product.id === props?.productId)?.imgUrl}
-						alt={products?.find((product) => product.id === props?.productId)?.name}
+						src={
+							props.products?.find((product) => product.id === props?.cartItemProps.productId)
+								?.imgUrl ||
+							products?.find((product) => product.id === props?.cartItemProps.productId)?.imgUrl
+						}
+						alt={
+							props.products?.find((product) => product.id === props?.cartItemProps.productId)
+								?.name ||
+							products?.find((product) => product.id === props?.cartItemProps.productId)?.name
+						}
 					/>
 					<div class='flex flex-col w-3/5 justify-between items-end'>
 						{/* top side */}
@@ -56,13 +67,21 @@ export default function CartItem(props: CartItemProps) {
 								<span class='flex items-center gap-1 font-medium sm:text-xl'>
 									{/* Product Name */}
 									<p class='truncate'>
-										{products?.find((product) => product.id === props?.productId)?.name}
+										{props.products?.find(
+											(product) => product.id === props?.cartItemProps.productId
+										)?.name ||
+											products?.find((product) => product.id === props?.cartItemProps.productId)
+												?.name}
 									</p>
 								</span>
 								{/* Product Price */}
 								<span class='text-sm text-gray-600 sm:text-base'>
 									{formatCurrency(
-										products?.find((product) => product.id === props?.productId)?.price || 0
+										props.products?.find((product) => product.id === props?.cartItemProps.productId)
+											?.price ||
+											products?.find((product) => product.id === props?.cartItemProps.productId)
+												?.price ||
+											0
 									)}
 								</span>
 							</div>
@@ -70,24 +89,29 @@ export default function CartItem(props: CartItemProps) {
 							{/* Right Side && Total Price / Product */}
 							<span class='font-medium h-min sm:text-xl'>
 								{formatCurrency(
-									(products?.find((product) => product.id === props?.productId)?.price || 0) *
-										quantity()
+									props.products?.find((product) => product.id === props?.cartItemProps.productId)
+										?.price ||
+										products?.find((product) => product.id === props?.cartItemProps.productId)
+											?.price ||
+										0 * quantity()
 								)}
 							</span>
 						</div>
 
 						{/* bottom side */}
 						<div class='flex'>
-							<Show when={props?.quantity}>
+							<Show when={props?.cartItemProps.quantity}>
 								<div class='flex items-center gap-2 mb-2'>
 									{/* Remove Button */}
 									<button
 										disabled={isRemoving() ? true : false}
 										onClick={() => {
-											handleRemoveCartItem(props?.productId, setIsRemoving);
+											handleRemoveCartItem(props?.cartItemProps.productId, setIsRemoving);
 											batch(() => {
 												setIsLoading(true);
-												setCartItems((items) => items.filter((item) => item.id !== props?.id));
+												setCartItems((items) =>
+													items.filter((item) => item.id !== props?.cartItemProps.id)
+												);
 											});
 										}}
 										class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:hover:text-gray-400 disabled:text-gray-400'
@@ -172,17 +196,28 @@ export default function CartItem(props: CartItemProps) {
 											onKeyUp={(e) => {
 												e.preventDefault();
 											}}
-											size={String(props?.quantity || 0).length}
+											size={String(props?.cartItemProps.quantity || 0).length}
 											type='number'
 											min={0}
-											max={products?.find((product) => product.id === props?.productId)?.stock || 0}
+											max={
+												props.products?.find(
+													(product) => product.id === props?.cartItemProps.productId
+												)?.stock ||
+												products?.find((product) => product.id === props?.cartItemProps.productId)
+													?.stock ||
+												0
+											}
 										/>
 
 										{/* Increase Button */}
 										<button
 											disabled={
 												quantity() ===
-												products?.find((product) => product.id === props?.productId)?.stock
+													props.products?.find(
+														(product) => product.id === props?.cartItemProps.productId
+													)?.stock ||
+												products?.find((product) => product.id === props?.cartItemProps.productId)
+													?.stock
 													? true
 													: false
 											}

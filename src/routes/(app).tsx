@@ -21,11 +21,11 @@ export function routeData() {
 }
 
 const App: VoidComponent = () => {
-	const data = useRouteData<typeof routeData>();
+	const cartItems = useRouteData<typeof routeData>();
 	return (
 		<>
-			<Show when={data()}>
-				<NavBar />
+			<Show when={cartItems()}>
+				<NavBar cartItems={cartItems()} />
 				<Outlet />
 			</Show>
 		</>

@@ -1,14 +1,18 @@
 import { Show } from "solid-js";
 import { A } from "solid-start";
 import CartContext from "~/context/CartContext";
+import type { CartItemProps, ProductProps } from "~/types";
 import CartSection from "./CartSection";
 import SummarySection from "./SummarySection/(SummarySection)";
 
-export default function DynamicCart() {
+export default function DynamicCart(props: {
+	cartItems: CartItemProps[];
+	products: ProductProps[];
+}) {
 	const { cartItems, isSubmitting } = CartContext;
 	return (
 		<Show
-			when={cartItems.length}
+			when={props.cartItems || cartItems.length}
 			fallback={
 				<Show when={!isSubmitting()}>
 					<div class='relative flex h-full flex-col gap-4 md:flex-row md:gap-8'>
@@ -28,12 +32,12 @@ export default function DynamicCart() {
 			<div class='relative flex h-full w-full flex-col gap-4 md:flex-row md:gap-8 lg:gap-14'>
 				{/* Cart */}
 				<div class='parent-island container flex flex-col items-center md:w-3/5 lg:w-2/3'>
-					<CartSection />
+					<CartSection cartItems={props.cartItems} products={props.products} />
 				</div>
 
 				{/* Summary Cart */}
 				<div class='parent-island flex w-full h-min flex-col py-4 gap-3 sticky bottom-0 bg-white md:border md:border-gray-100 md:border-opacity-90 md:p-3 md:w-2/5 md:top-28 md:shadow-lg md:rounded lg:text-xl lg:w-1/3'>
-					<SummarySection />
+					<SummarySection cartItems={props.cartItems} products={props.products} />
 				</div>
 			</div>
 		</Show>

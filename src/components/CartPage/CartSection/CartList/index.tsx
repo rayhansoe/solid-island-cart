@@ -5,8 +5,9 @@ import CartContext from "~/context/CartContext";
 
 import autoAnimate from "@formkit/auto-animate";
 import CartItem from "../CartItem";
+import type { CartItemProps, ProductProps } from "~/types";
 
-export default function CartList() {
+export default function CartList(props: { cartItems: CartItemProps[]; products: ProductProps[] }) {
 	const { cartItems } = CartContext;
 
 	let animationParent: HTMLUListElement | ((el: HTMLUListElement) => void) | any;
@@ -16,9 +17,11 @@ export default function CartList() {
 	});
 
 	return (
-		<Show when={cartItems?.length}>
+		<Show when={props.cartItems.length || cartItems?.length}>
 			<ul ref={animationParent} class='parent-island container flex flex-col w-full '>
-				<For each={cartItems}>{(item) => <CartItem {...item} />}</For>
+				<For each={props.cartItems || cartItems}>
+					{(item) => <CartItem products={props.products} cartItemProps={item} />}
+				</For>
 			</ul>
 		</Show>
 	);

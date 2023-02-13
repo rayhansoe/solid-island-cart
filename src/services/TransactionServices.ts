@@ -1,8 +1,8 @@
 import type { RouteDataArgs } from "solid-start";
-import server$, { createServerData$ } from "solid-start/server";
-import { prisma } from "~/server/db/client";
+import { createServerData$ } from "solid-start/server";
 import type { prismaType } from "~/types";
-import { getCartItems, getCartItems$, getTotalPrice } from "./CartServices";
+import { getCartItems, getTotalPrice } from "./CartServices";
+import { prisma } from ".";
 
 type Params = RouteDataArgs["params"];
 
@@ -21,20 +21,6 @@ export const createTransaction = async (prisma: prismaType) => {
 		},
 	});
 };
-
-// Create Transaction Server Function
-export const createTransaction$ = server$(async () => {
-	const cartItems = await prisma.cartItem.findMany();
-	const totalPrice = await getTotalPrice(prisma);
-	return await prisma.transaction.create({
-		data: {
-			quantities: cartItems.length,
-			totalPrice,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		},
-	});
-});
 
 // Create Transaction Item
 export const createTransactionItem = async (prisma: prismaType, transactionId: string) => {
@@ -55,40 +41,12 @@ export const createTransactionItem = async (prisma: prismaType, transactionId: s
 	return await prisma.$transaction(arrQuery);
 };
 
-// Create Transaction Item Server Function
-export const createTransactionItem$ = server$(async (transactionId: string) => {
-	const cartItems = await getCartItems$();
-
-	cartItems.forEach(async (item) => {
-		await prisma.transactionItem.create({
-			data: {
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				quantity: item.quantity,
-				productId: item.productId,
-				transactionId,
-			},
-		});
-	});
-
-	return await prisma.transactionItem.findMany({
-		where: {
-			transactionId,
-		},
-	});
-});
-
 // READ
 
 // get Transactions
 export const getTransactions = async (prisma: prismaType) => {
 	return await prisma.transaction.findMany();
 };
-
-// get Transactions Server Function
-export const getTransactions$ = server$(async () => {
-	return await prisma.transaction.findMany();
-});
 
 // get Transactions Server Resource
 export const getServerTransactionsData$ = () =>
@@ -110,15 +68,6 @@ export const getTransaction = async (prisma: prismaType, transactionId: string) 
 	});
 };
 
-// get Transaction Server Function
-export const getTransaction$ = server$(async (transactionId: string) => {
-	return await prisma.transaction.findUnique({
-		where: {
-			id: transactionId,
-		},
-	});
-});
-
 // get Transaction Server Resource
 export const getServerTransactionData$ = (params: Params) =>
 	createServerData$(
@@ -135,11 +84,6 @@ export const getTransactionsItems = async (prisma: prismaType) => {
 	return await prisma.transactionItem.findMany();
 };
 
-// get Transaction Items Server Function
-export const getTransactionsItems$ = server$(async () => {
-	return await prisma.transactionItem.findMany();
-});
-
 // get Transaction Items Server Resource
 export const getServerTransactionsItemsData$ = () =>
 	createServerData$(
@@ -153,11 +97,6 @@ export const getServerTransactionsItemsData$ = () =>
 export const getTransactionItems = async (prisma: prismaType, transactionId: string) => {
 	return await prisma.transactionItem.findMany({ where: { transactionId } });
 };
-
-// get Transaction Items Server Function
-export const getTransactionItems$ = server$(async (transactionId: string) => {
-	return await prisma.transactionItem.findMany({ where: { transactionId } });
-});
 
 // get Transaction Items Server Resource
 export const getServerTransactionItemsData$ = (params: Params) =>
@@ -176,15 +115,6 @@ export const getTransactionItem = async (prisma: prismaType, transactionItemId: 
 		},
 	});
 };
-
-// get Transaction Item Server Function
-export const getTransactionItem$ = server$(async (transactionItemId: string) => {
-	return await prisma.transactionItem.findUnique({
-		where: {
-			id: transactionItemId,
-		},
-	});
-});
 
 // get Transaction Item Server Resource
 export const getServerTransactionItemData$ = () =>

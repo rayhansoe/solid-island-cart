@@ -27,7 +27,10 @@ export default function ProductCart(props: ProductCartProps) {
 
 	const { handleReStockProduct, getProductClient } = ProductContext;
 
-	const [quantity, setQuantity] = createSignal<number>(getCartItemQuantityByProductId(props.id));
+	const getCartItemQuantityByProductIdServer = () =>
+		props.serverCartItems?.find((item) => item.productId === props.id)?.quantity || 0;
+
+	const [quantity, setQuantity] = createSignal<number>(getCartItemQuantityByProductIdServer());
 
 	const update = () => {
 		handleSetCartItemQuantityByProductId(props.id, quantity());
@@ -35,7 +38,9 @@ export default function ProductCart(props: ProductCartProps) {
 
 	const debouncedUpdate = debounce(update, 1000);
 
-	createEffect(() => setQuantity(getCartItemQuantityByProductId(props.id)));
+	createEffect(() =>
+		setQuantity(getCartItemQuantityByProductIdServer() || getCartItemQuantityByProductId(props.id))
+	);
 
 	const getLengthQuantity = () => quantity().toString().length;
 
