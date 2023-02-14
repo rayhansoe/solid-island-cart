@@ -2,6 +2,8 @@ import solid from "solid-start/vite";
 import { defineConfig } from "vite";
 //
 // import vercel from "solid-start-vercel";
+
+// @ts-expect-error no typing
 import netlify from "solid-start-netlify";
 
 export default defineConfig(() => {
