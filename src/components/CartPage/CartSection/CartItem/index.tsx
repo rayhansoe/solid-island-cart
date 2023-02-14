@@ -213,11 +213,11 @@ export default function CartItem(props: {
 										<button
 											disabled={
 												quantity() ===
-													props.products?.find(
-														(product) => product.id === props?.cartItemProps.productId
-													)?.stock ||
-												products?.find((product) => product.id === props?.cartItemProps.productId)
-													?.stock
+												(props.products?.find(
+													(product) => product.id === props?.cartItemProps.productId
+												)?.stock ||
+													products?.find((product) => product.id === props?.cartItemProps.productId)
+														?.stock)
 													? true
 													: false
 											}
