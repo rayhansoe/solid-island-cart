@@ -8,7 +8,7 @@ export default defineConfig(() => {
 		plugins: [
 			// solid({ islands: true, islandsRouter: true, ssr: true, adapter: netlify({ edge: false }) }),
 			// solid({ islands: true, islandsRouter: true, ssr: true, adapter: netlify({ edge: false }) }),
-			solid({ islands: true, islandsRouter: true, ssr: true, adapter: vercel({ edge: false }) }),
+			solid({ islands: true, islandsRouter: true, ssr: true, adapter: vercel({ edge: true }) }),
 		],
 		ssr: { external: ["@prisma/client"] },
 	};
