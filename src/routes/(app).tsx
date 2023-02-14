@@ -38,8 +38,7 @@ const App: VoidComponent = () => {
 	return (
 		<>
 			<Show when={cartItems()}>
-				{JSON.stringify(cartItems())}
-				{/* <NavBar cartItems={cartItems()} /> */}
+				<NavBar cartItems={cartItems()} />
 				<Outlet />
 			</Show>
 		</>

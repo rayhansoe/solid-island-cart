@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 async function main() {
 	const dataDump = [
 		{
-			id: "cld6tftrb0000s7pwynpntf54",
+			// id: "cld6tftrb0000s7pwynpntf54",
 			name: "Red Nike Flyknit",
 			category: "fashion",
 			stock: 9999,
@@ -15,7 +15,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftrw000gs7pw0i5efp4n",
+			// id: "cld6tftrw000gs7pw0i5efp4n",
 			name: "Banana",
 			category: "Food & Beverage",
 			stock: 9999,
@@ -26,7 +26,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tfts2000is7pwujw1c3o1",
+			// id: "cld6tfts2000is7pwujw1c3o1",
 			name: "Car",
 			category: "automotive",
 			stock: 9999,
@@ -37,7 +37,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftrb0002s7pwmwolmjao",
+			// id: "cld6tftrb0002s7pwmwolmjao",
 			name: "White T-shirt",
 			category: "fashion",
 			stock: 9999,
@@ -48,7 +48,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftrd000as7pwau139yni",
+			// id: "cld6tftrd000as7pwau139yni",
 			name: "Choker Necklace Pendant",
 			category: "fashion",
 			stock: 9999,
@@ -59,7 +59,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftre000es7pwrk2yxlkm",
+			// id: "cld6tftre000es7pwrk2yxlkm",
 			name: "Book",
 			category: "book",
 			stock: 9999,
@@ -70,7 +70,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftrd0006s7pwx5ut2hv0",
+			// id: "cld6tftrd0006s7pwx5ut2hv0",
 			name: "Tissot T-Classic",
 			category: "fashion",
 			stock: 9999,
@@ -81,7 +81,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftrb0001s7pwgup0r1mv",
+			// id: "cld6tftrb0001s7pwgup0r1mv",
 			name: "Brown Bomber Jacket",
 			category: "fashion",
 			stock: 9999,
@@ -92,7 +92,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftre000cs7pw8dcgokvj",
+			// id: "cld6tftre000cs7pw8dcgokvj",
 			name: "Laptop",
 			category: "electronic",
 			stock: 9999,
@@ -103,7 +103,7 @@ async function main() {
 			popularity: 1,
 		},
 		{
-			id: "cld6tftrd0007s7pwp3z3zh4f",
+			// id: "cld6tftrd0007s7pwp3z3zh4f",
 			name: "Dark Casual Backpack",
 			category: "fashion",
 			stock: 9999,

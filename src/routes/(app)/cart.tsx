@@ -60,9 +60,7 @@ function cart() {
 						<h1 class='text-2xl font-semibold lg:text-3xl'>Cart</h1>
 					</div>
 					<Show when={cartItems() && products()}>
-						{JSON.stringify(cartItems())}
-						{JSON.stringify(products())}
-						{/* <CartPage cartItems={cartItems()} products={products()} /> */}
+						<CartPage cartItems={cartItems()} products={products()} />
 					</Show>
 				</main>
 			</AppProvider>
