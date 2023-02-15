@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
 }
-
 model Product {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  id              String             @id @default(uuid())
   name            String
   category        String
   stock           Int
@@ -22,18 +22,20 @@ model Product {
 }
 
 model CartItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(uuid())
   quantity  Int
   product   Product  @relation(fields: [productId], references: [id])
-  productId String @db.ObjectId
+  productId String 
   isChecked Boolean
   status    Boolean
   updatedAt DateTime
   createdAt DateTime
+
+  @@index([productId])
 }
 
 model Transaction {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  id              String             @id @default(uuid())
   transactionItem TransactionItem[]
   updatedAt       DateTime @updatedAt
   createdAt       DateTime @default(now())
@@ -42,12 +44,15 @@ model Transaction {
 }
 
 model TransactionItem {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  id            String       @id @default(uuid())
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String @db.ObjectId
+  transactionId String 
   quantity      Int
   product       Product     @relation(fields: [productId], references: [id])
-  productId     String @db.ObjectId
+  productId     String 
   updatedAt     DateTime @default(now())
   createdAt     DateTime @updatedAt
+
+  @@index([transactionId])
+  @@index([productId])
 }
