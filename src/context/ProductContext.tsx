@@ -38,10 +38,6 @@ function createProductContext() {
 		}
 	});
 
-	const getProductClient = (id: string) => products?.find((product) => product.id === id);
-
-	const getStockItemClient = (id: string) => products?.find((product) => product.id === id)?.stock;
-
 	const handleReStockProduct = async (productsId: string, setIsReStocking: Setter<boolean>) => {
 		setIsReStocking(true);
 		const response = await reStockProduct$(productsId);
@@ -85,8 +81,6 @@ function createProductContext() {
 	return {
 		products,
 		setProducts,
-		getProductClient,
-		getStockItemClient,
 		handleReStockProduct,
 		router,
 	};
