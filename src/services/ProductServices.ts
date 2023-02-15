@@ -289,7 +289,7 @@ export const updateProductPopularityRaw = async (
 	});
 };
 
-// Decrease Product Stock
+// Decrease Products Stock
 export const decreaseProductsStock = async (prisma: prismaType) => {
 	return await prisma.$transaction(async (ctx) => {
 		const cartItems = await ctx.cartItem.findMany();
