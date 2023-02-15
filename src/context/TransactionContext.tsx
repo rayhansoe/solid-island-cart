@@ -2,7 +2,7 @@ import type { Transaction, TransactionItem } from "@prisma/client";
 import { batch, createRoot, createSignal } from "solid-js";
 import server$ from "solid-start/server";
 import { getCartItems, removeCartItems } from "~/services/CartServices";
-import { getProducts } from "~/services/ProductServices";
+import { decreaseProductsStock } from "~/services/ProductServices";
 import { createTransaction, createTransactionItem } from "~/services/TransactionServices";
 import CartContext from "./CartContext";
 import ProductContext from "./ProductContext";
@@ -30,21 +30,11 @@ function createTransactionContext() {
 
 			const newTransactionItems = await createTransactionItem(prisma, newTransaction.id);
 
-			const arry = cartItems.map((item) =>
-				prisma.product.update({
-					where: { id: item.productId },
-					data: {
-						stock: {
-							decrement: item.quantity,
-						},
-					},
-				})
-			);
-			await prisma.$transaction(arry);
-
 			if (!newTransactionItems) {
 				throw new Error("failed to create new transaction Items record, please try again!");
 			}
+
+			const products = await decreaseProductsStock(prisma);
 
 			await removeCartItems(prisma);
 
@@ -55,7 +45,7 @@ function createTransactionContext() {
 			}
 			await removeCartItems(prisma);
 
-			const products = await getProducts(prisma);
+			// const products = await getProducts(prisma);
 
 			if (!products.length) {
 				throw new Error("failed to create new transaction Items record, please try again!");

@@ -1,6 +1,6 @@
 import type { Product } from "@prisma/client";
 import { createServerData$ } from "solid-start/server";
-import type { CartItemProps, prismaType } from "~/types";
+import type { prismaType } from "~/types";
 import { getCartItems } from "./CartServices";
 import { prisma } from "~/server/db/client";
 
@@ -291,28 +291,22 @@ export const updateProductPopularityRaw = async (
 };
 
 // Decrease Product Stock
-export const decreaseProductsStockExperimental = async (prisma: prismaType) => {
+export const decreaseProductsStock = async (prisma: prismaType) => {
 	const cartItems = await getCartItems(prisma);
-	return cartItems.map(async (item: CartItemProps) => {
-		return await prisma.product.update({
-			where: { id: item.productId },
+	const arrQuery = cartItems.map((item) =>
+		prisma.product.update({
+			where: {
+				id: item.productId,
+			},
 			data: {
 				stock: {
 					decrement: item.quantity,
 				},
-				updatedAt: new Date(),
 			},
-			select: {
-				id: true,
-				name: true,
-				category: true,
-				stock: true,
-				price: true,
-				imgUrl: true,
-				popularity: true,
-			},
-		});
-	});
+		})
+	);
+
+	return await prisma.$transaction(arrQuery);
 };
 
 // Decrease Product Stock
