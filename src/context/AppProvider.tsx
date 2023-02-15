@@ -17,14 +17,6 @@ export default function AppProvider(props: {
 	const { setCartItems, setIsLoading, setIsSubmitting } = CartContext;
 
 	createEffect(() => {
-		console.log(props.cartItems);
-	});
-
-	createEffect(() => {
-		console.log(props.products);
-	});
-
-	createEffect(() => {
 		batch(() => {
 			if (props.cartItems) {
 				setIsLoading(false);

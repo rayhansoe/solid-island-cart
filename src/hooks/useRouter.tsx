@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { debounce } from "@solid-primitives/scheduled";
-import NoWorkResult from "postcss/lib/no-work-result";
 import { createEffect, createSignal } from "solid-js";
 import { A } from "solid-start";
 
@@ -19,11 +18,6 @@ export default function useRouter() {
 		};
 
 		const debouncedNavigate = debounce(navigate, 0);
-
-		createEffect(() => {
-			console.log(aRef);
-			console.log(newA);
-		});
 
 		createEffect(() => {
 			if (newA) {

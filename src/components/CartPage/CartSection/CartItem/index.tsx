@@ -8,6 +8,7 @@ import { formatCurrency } from "~/utilities/formatCurrency";
 
 export default function CartItem(props: {
 	cartItemProps: CartItemProps;
+	cartItems: CartItemProps[];
 	products: ProductProps[];
 }) {
 	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
@@ -20,6 +21,7 @@ export default function CartItem(props: {
 	} = CartContext;
 
 	const { products } = ProductContext;
+	const [stock, setStock] = createSignal<number>(0);
 
 	const update = () => {
 		if (props?.cartItemProps.id && quantity()) {
@@ -29,11 +31,13 @@ export default function CartItem(props: {
 
 	const debouncedUpdate = debounce(update, 1000);
 
-	createEffect(() => {
-		if (props?.cartItemProps.quantity) {
-			setQuantity(props?.cartItemProps.quantity);
-		}
-	});
+	createEffect(() =>
+		setStock(props.products.find((p) => p.id === props.cartItemProps.productId)?.stock || 0)
+	);
+
+	createEffect(() =>
+		setStock(products.find((p) => p.id === props.cartItemProps.productId)?.stock || 0)
+	);
 
 	const getLengthQuantity = () => quantity().toString().length;
 
@@ -50,13 +54,10 @@ export default function CartItem(props: {
 						loading='lazy'
 						src={
 							props.products?.find((product) => product.id === props?.cartItemProps.productId)
-								?.imgUrl ||
-							products?.find((product) => product.id === props?.cartItemProps.productId)?.imgUrl
+								?.imgUrl
 						}
 						alt={
-							props.products?.find((product) => product.id === props?.cartItemProps.productId)
-								?.name ||
-							products?.find((product) => product.id === props?.cartItemProps.productId)?.name
+							props.products?.find((product) => product.id === props?.cartItemProps.productId)?.name
 						}
 					/>
 					<div class='flex flex-col w-3/5 justify-between items-end'>
@@ -89,11 +90,8 @@ export default function CartItem(props: {
 							{/* Right Side && Total Price / Product */}
 							<span class='font-medium h-min sm:text-xl'>
 								{formatCurrency(
-									props.products?.find((product) => product.id === props?.cartItemProps.productId)
-										?.price ||
-										products?.find((product) => product.id === props?.cartItemProps.productId)
-											?.price ||
-										0 * quantity()
+									(props.products?.find((product) => product.id === props?.cartItemProps.productId)
+										?.price || 0) * quantity()
 								)}
 							</span>
 						</div>
@@ -145,7 +143,9 @@ export default function CartItem(props: {
 											/>
 										</svg>
 									</button>
+
 									<span class='h-5 w-[1px] bg-gray-300' />
+
 									<div class='flex items-center gap-2'>
 										{/* Decrease Button */}
 										<button
@@ -184,8 +184,8 @@ export default function CartItem(props: {
 											}}
 											value={quantity()}
 											onInput={(e) => {
-												if (parseInt(e.currentTarget.value) >= quantity()) {
-													e.currentTarget.value = quantity().toString();
+												if (parseInt(e.currentTarget.value) >= stock()) {
+													e.currentTarget.value = stock().toString();
 												}
 												batch(() => {
 													setQuantity(parseInt(e.currentTarget.value));
@@ -198,15 +198,8 @@ export default function CartItem(props: {
 											}}
 											size={String(props?.cartItemProps.quantity || 0).length}
 											type='number'
-											min={0}
-											max={
-												props.products?.find(
-													(product) => product.id === props?.cartItemProps.productId
-												)?.stock ||
-												products?.find((product) => product.id === props?.cartItemProps.productId)
-													?.stock ||
-												0
-											}
+											min={1}
+											max={stock()}
 										/>
 
 										{/* Increase Button */}

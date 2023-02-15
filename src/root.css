@@ -86,26 +86,6 @@
 	*::-webkit-scrollbar-thumb:hover {
 		background-color: #555;
 	}
-
-	/* The key is to start <details> element in the "open" state...
-		...and animate its max-height value by toggling a checkbox. */
-	details {
-		box-sizing: border-box;
-		transition: max-height 1000ms ease-out;
-
-		max-height: 174px; /* Set a max-height value just enough to show the summary content */
-		overflow: hidden; /* Hide the rest of the content */
-	}
-
-	/* Here you can choose two approaches to animate <details> element:
-		1) Use adjacent sibling combinator (+)
-		2) Use :has() pseudo-class, but this might not work in Firefox.
-	*/
-
-	input:checked + details,
-	details:has(input:checked) {
-		max-height: 2000px; /* Set a max-height value enough to show all the content */
-	}
 }
 
 @layer components {

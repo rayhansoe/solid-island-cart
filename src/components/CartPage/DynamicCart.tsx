@@ -1,6 +1,8 @@
-import { Show } from "solid-js";
+/* eslint-disable solid/reactivity */
+import { createEffect, createSignal, Show } from "solid-js";
 import { A } from "solid-start";
 import CartContext from "~/context/CartContext";
+import ProductContext from "~/context/ProductContext";
 import type { CartItemProps, ProductProps } from "~/types";
 import CartSection from "./CartSection";
 import SummarySection from "./SummarySection/(SummarySection)";
@@ -10,9 +12,14 @@ export default function DynamicCart(props: {
 	products: ProductProps[];
 }) {
 	const { cartItems, isSubmitting } = CartContext;
+	const { products } = ProductContext;
+
+	const [cartItemsQuantity, setCartItemsQuantity] = createSignal(props.cartItems.length);
+
+	createEffect(() => setCartItemsQuantity(cartItems.length));
 	return (
 		<Show
-			when={props.cartItems || cartItems.length}
+			when={cartItemsQuantity()}
 			fallback={
 				<Show when={!isSubmitting()}>
 					<div class='relative flex h-full flex-col gap-4 md:flex-row md:gap-8'>
@@ -32,12 +39,18 @@ export default function DynamicCart(props: {
 			<div class='relative flex h-full w-full flex-col gap-4 md:flex-row md:gap-8 lg:gap-14'>
 				{/* Cart */}
 				<div class='parent-island container flex flex-col items-center md:w-3/5 lg:w-2/3'>
-					<CartSection cartItems={props.cartItems} products={props.products} />
+					<CartSection
+						cartItems={props.cartItems || cartItems}
+						products={props.products || products}
+					/>
 				</div>
 
 				{/* Summary Cart */}
 				<div class='parent-island flex w-full h-min flex-col py-4 gap-3 sticky bottom-0 bg-white md:border md:border-gray-100 md:border-opacity-90 md:p-3 md:w-2/5 md:top-28 md:shadow-lg md:rounded lg:text-xl lg:w-1/3'>
-					<SummarySection cartItems={props.cartItems} products={props.products} />
+					<SummarySection
+						cartItems={props.cartItems || cartItems}
+						products={props.products || products}
+					/>
 				</div>
 			</div>
 		</Show>

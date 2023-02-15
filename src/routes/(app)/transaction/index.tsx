@@ -34,88 +34,67 @@ export default function Page() {
 						{(transaction) => {
 							return (
 								<>
-									<Show
-										when={
-											(transactionsItems()?.filter((item) => item.transactionId === transaction.id)
-												.length || 0) > 1
-										}
-									>
-										<input
-											class='hidden'
-											type='checkbox'
-											name={`approach-${transaction.id}`}
-											id={`approach-${transaction.id}`}
-										/>
-									</Show>
-									<details
-										class='p-4 w-full shadow rounded my-1 border-gray-100 border transition-[max-height] duration-1000 ease-in-out overflow-hidden max-h-[174px] box-border'
-										open
-									>
-										<summary class='block list-none'>
-											<label
-												for={`approach-${transaction.id}`}
-												class={`flex flex-col gap-4 w-full ${
-													(transactionsItems()?.filter(
-														(item) => item.transactionId === transaction.id
-													).length || 0) > 1
-														? "cursor-pointer"
-														: ""
-												}`}
+									<details class='p-4 w-full shadow rounded my-1 border-gray-100 border'>
+										<summary
+											class={`flex flex-col gap-4 w-full ${
+												(transactionsItems()?.filter(
+													(item) => item.transactionId === transaction.id
+												).length || 0) > 1
+													? "cursor-pointer"
+													: ""
+											}`}
+										>
+											<div class='flex items-center gap-4'>
+												<span class='text-sm font-bold text-green-700 bg-green-200 py-1 px-2 rounded'>
+													Success
+												</span>
+												<span class='text-sm font-medium text-gray-600'>
+													{transaction.createdAt.toDateString()}
+												</span>
+												<span class='text-sm text-slate-500 hidden sm:block'>{`INV/${transaction.createdAt.toLocaleDateString()}/${transaction.id.toUpperCase()}`}</span>
+											</div>
+											<For
+												each={transactionsItems()
+													?.filter((item) => item.transactionId === transaction.id)
+													.splice(0, 1)}
 											>
-												<div class='flex items-center gap-4'>
-													<span class='text-sm font-bold text-green-700 bg-green-200 py-1 px-2 rounded'>
-														Success
-													</span>
-													<span class='text-sm font-medium text-gray-600'>
-														{transaction.createdAt.toDateString()}
-													</span>
-													<span class='text-sm text-slate-500 hidden sm:block'>{`INV/${transaction.createdAt.toLocaleDateString()}/${transaction.id.toUpperCase()}`}</span>
-												</div>
-												<For
-													each={transactionsItems()
-														?.filter((item) => item.transactionId === transaction.id)
-														.splice(0, 1)}
-												>
-													{(item) => (
-														<>
-															<div class='flex w-full justify-between'>
-																<div class='flex gap-3 w-60 sm:w-full'>
-																	<img
-																		class='w-24 h-24 object-cover rounded-lg'
-																		src={getProduct(item.productId)?.imgUrl || ""}
-																		alt={getProduct(item.productId)?.name}
-																		loading='lazy'
-																	/>
-																	<div class='flex flex-col gap-2 w-3/5'>
-																		<span class='text-lg font-medium truncate'>
-																			{getProduct(item.productId)?.name}
-																		</span>
-																		<p class='text-sm text-gray-600'>
-																			{item.quantity}pcs * ${getProduct(item.productId)?.price}
-																		</p>
-																		<Show
-																			when={
-																				(transactionsItems()?.filter(
-																					(item) => item.transactionId === transaction.id
-																				).length || 0) > 1
-																			}
-																		>
-																			<p class='text-sm text-gray-800'>{`+${
-																				transaction.quantities - 1
-																			} more products`}</p>
-																		</Show>
-																	</div>
-																</div>
-																<div class='flex flex-col'>
-																	<span class='text-xl font-semibold'>
-																		${transaction.totalPrice}
+												{(item) => (
+													<>
+														<div class='flex w-full justify-between'>
+															<div class='flex gap-3 w-60 sm:w-full'>
+																<img
+																	class='w-24 h-24 object-cover rounded-lg'
+																	src={getProduct(item.productId)?.imgUrl || ""}
+																	alt={getProduct(item.productId)?.name}
+																	loading='lazy'
+																/>
+																<div class='flex flex-col gap-2 w-3/5'>
+																	<span class='text-lg font-medium truncate'>
+																		{getProduct(item.productId)?.name}
 																	</span>
+																	<p class='text-sm text-gray-600'>
+																		{item.quantity}pcs * ${getProduct(item.productId)?.price}
+																	</p>
+																	<Show
+																		when={
+																			(transactionsItems()?.filter(
+																				(item) => item.transactionId === transaction.id
+																			).length || 0) > 1
+																		}
+																	>
+																		<p class='text-sm text-gray-800'>{`+${
+																			transaction.quantities - 1
+																		} more products`}</p>
+																	</Show>
 																</div>
 															</div>
-														</>
-													)}
-												</For>
-											</label>
+															<div class='flex flex-col'>
+																<span class='text-xl font-semibold'>${transaction.totalPrice}</span>
+															</div>
+														</div>
+													</>
+												)}
+											</For>
 										</summary>
 										<Show
 											when={

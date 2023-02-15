@@ -16,7 +16,6 @@ export default function ProductCart(props: ProductCartProps) {
 	const [isReStocking, setIsReStocking] = createSignal<boolean>(false);
 	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
 	const {
-		cartItems,
 		getCartItemQuantityByProductId,
 		setCartItems,
 		setIsLoading,
@@ -30,7 +29,10 @@ export default function ProductCart(props: ProductCartProps) {
 	const getCartItemQuantityByProductIdServer = () =>
 		props.serverCartItems?.find((item) => item.productId === props.id)?.quantity || 0;
 
+	const getProductStock = () => getProductClient(props.id)?.stock || 0;
+
 	const [quantity, setQuantity] = createSignal<number>(getCartItemQuantityByProductIdServer());
+	const [stock, setStock] = createSignal<number>(props.stock);
 
 	const update = () => {
 		handleSetCartItemQuantityByProductId(props.id, quantity());
@@ -41,6 +43,8 @@ export default function ProductCart(props: ProductCartProps) {
 	createEffect(() =>
 		setQuantity(getCartItemQuantityByProductIdServer() || getCartItemQuantityByProductId(props.id))
 	);
+
+	createEffect(() => setStock(getProductStock()));
 
 	const getLengthQuantity = () => quantity().toString().length;
 
@@ -59,13 +63,7 @@ export default function ProductCart(props: ProductCartProps) {
 						+Restock
 					</button>
 				</Match>
-				<Match
-					when={
-						(props.serverCartItems?.find((item) => item.productId === props.id)?.quantity ||
-							cartItems?.find((item) => item.productId === props.id)?.quantity) &&
-						(props.stock || getProductClient(props.id)?.stock)
-					}
-				>
+				<Match when={quantity() && stock()}>
 					<div class='flex items-center gap-2 h-10'>
 						<button
 							disabled={isRemoving() ? true : false}
@@ -156,13 +154,7 @@ export default function ProductCart(props: ProductCartProps) {
 								onKeyUp={(e) => {
 									e.preventDefault();
 								}}
-								size={
-									String(
-										props.serverCartItems?.find((item) => item.productId === props.id)?.quantity ||
-											cartItems?.find((item) => item.productId === props.id)?.quantity ||
-											0
-									).length
-								}
+								size={String(quantity()).length}
 								type='number'
 								min={1}
 								max={props.stock || getProductClient(props.id)?.stock}
