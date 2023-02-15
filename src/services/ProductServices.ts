@@ -1,7 +1,6 @@
 import type { Product } from "@prisma/client";
 import { createServerData$ } from "solid-start/server";
 import type { prismaType } from "~/types";
-import { getCartItems } from "./CartServices";
 import { prisma } from "~/server/db/client";
 
 // CREATE
