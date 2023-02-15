@@ -292,21 +292,35 @@ export const updateProductPopularityRaw = async (
 
 // Decrease Product Stock
 export const decreaseProductsStock = async (prisma: prismaType) => {
-	const cartItems = await getCartItems(prisma);
-	const arrQuery = cartItems.map((item) =>
-		prisma.product.update({
-			where: {
-				id: item.productId,
-			},
-			data: {
-				stock: {
-					decrement: item.quantity,
-				},
-			},
-		})
-	);
+	return await prisma.$transaction(async (ctx) => {
+		const cartItems = await ctx.cartItem.findMany();
 
-	return await prisma.$transaction(arrQuery);
+		cartItems.forEach(async (item) => {
+			await ctx.product.update({
+				where: { id: item.productId },
+				data: {
+					stock: {
+						decrement: item.quantity,
+					},
+				},
+			});
+		});
+
+		return await ctx.product.findMany({
+			orderBy: {
+				popularity: "desc",
+			},
+			select: {
+				id: true,
+				name: true,
+				category: true,
+				stock: true,
+				price: true,
+				imgUrl: true,
+				popularity: true,
+			},
+		});
+	});
 };
 
 // Decrease Product Stock
