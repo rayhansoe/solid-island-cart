@@ -4,14 +4,52 @@ import { createSignal } from "solid-js";
 import { createEffect, createRoot } from "solid-js";
 import { createStore, reconcile } from "solid-js/store";
 import server$ from "solid-start/server";
-import {
-	getProducts,
-	// getProducts$,
-	reStockProduct,
-} from "~/services/ProductServices";
-import type { ProductProps } from "~/types";
+// import {
+// 	getProducts,
+// 	// getProducts$,
+// 	reStockProduct,
+// } from "~/services/ProductServices";
+import type { prismaType, ProductProps } from "~/types";
 import { prisma } from "~/server/db/client";
 import { A } from "solid-start";
+
+// get Products
+export const getProducts = async (prisma: prismaType) => {
+	return await prisma.product.findMany({
+		orderBy: {
+			popularity: "desc",
+		},
+		select: {
+			id: true,
+			name: true,
+			category: true,
+			stock: true,
+			price: true,
+			imgUrl: true,
+			popularity: true,
+		},
+	});
+};
+
+// Product re-Stock
+export const reStockProduct = async (prisma: prismaType, productId: string) => {
+	return await prisma.product.update({
+		where: { id: productId },
+		data: {
+			stock: 9999,
+			updatedAt: new Date(),
+		},
+		select: {
+			id: true,
+			name: true,
+			category: true,
+			stock: true,
+			price: true,
+			imgUrl: true,
+			popularity: true,
+		},
+	});
+};
 
 // const data: ProductProps[] = await getProducts$();
 
