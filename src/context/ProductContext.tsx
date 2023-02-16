@@ -4,16 +4,52 @@ import { createSignal } from "solid-js";
 import { createEffect, createRoot } from "solid-js";
 import { createStore, reconcile } from "solid-js/store";
 import server$ from "solid-start/server";
-import {
-	getProducts,
-	// getProducts$,
-	reStockProduct,
-} from "~/services/ProductServices";
-import type { ProductProps } from "~/types";
+// import {
+// 	getProducts,
+// 	// getProducts$,
+// 	reStockProduct,
+// } from "~/services/ProductServices";
+import type { prismaType, ProductProps } from "~/types";
 import { prisma } from "~/server/db/client";
 import { A } from "solid-start";
 
-// const data: ProductProps[] = await getProducts$();
+// get Products
+export const getProducts = async (prisma: prismaType) => {
+	return await prisma.product.findMany({
+		orderBy: {
+			popularity: "desc",
+		},
+		select: {
+			id: true,
+			name: true,
+			category: true,
+			stock: true,
+			price: true,
+			imgUrl: true,
+			popularity: true,
+		},
+	});
+};
+
+// Product re-Stock
+export const reStockProduct = async (prisma: prismaType, productId: string) => {
+	return await prisma.product.update({
+		where: { id: productId },
+		data: {
+			stock: 9999,
+			updatedAt: new Date(),
+		},
+		select: {
+			id: true,
+			name: true,
+			category: true,
+			stock: true,
+			price: true,
+			imgUrl: true,
+			popularity: true,
+		},
+	});
+};
 
 function createProductContext() {
 	const [products, setProducts] = createStore<ProductProps[]>([]);
@@ -39,8 +75,6 @@ function createProductContext() {
 	});
 
 	const getProductClient = (id: string) => products?.find((product) => product.id === id);
-
-	const getStockItemClient = (id: string) => products?.find((product) => product.id === id)?.stock;
 
 	const handleReStockProduct = async (productsId: string, setIsReStocking: Setter<boolean>) => {
 		setIsReStocking(true);
@@ -86,7 +120,6 @@ function createProductContext() {
 		products,
 		setProducts,
 		getProductClient,
-		getStockItemClient,
 		handleReStockProduct,
 		router,
 	};

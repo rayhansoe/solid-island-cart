@@ -2,23 +2,127 @@ import type { Setter } from "solid-js";
 import { batch, createRoot, createSignal } from "solid-js";
 import { createStore, reconcile } from "solid-js/store";
 import server$ from "solid-start/server";
-import {
-	createCartItem,
-	decreaseCartItem,
-	getCartItem,
-	getCartItemByProductId,
-	getCartItems,
-	increaseCartItem,
-	removeCartItem,
-	setCartItemQuantity,
-} from "~/services/CartServices";
+// import {
+// 	createCartItem,
+// 	decreaseCartItem,
+// 	getCartItem,
+// 	getCartItemByProductId,
+// 	getCartItems,
+// 	// getCartItems$ as getCartItemsRPC$,
+// 	increaseCartItem,
+// 	removeCartItem,
+// 	setCartItemQuantity,
+// } from "~/services/CartServices";
 import { getProduct, updateProductPopularityLite } from "~/services/ProductServices";
 import type { CartItemProps } from "~/types";
-import productContext from "./ProductContext";
 import { prisma } from "~/server/db/client";
 
+// const data: CartItemProps[] = await getCartItemsRPC$();
+import type { prismaType } from "~/types";
+// import { getProducts } from "./ProductServices";
+// import { prisma } from "~/server/db/client";
+
+// CREATE
+
+// Create Cart Item
+export const createCartItem = async (prisma: prismaType, productId: string) => {
+	return await prisma.cartItem.create({
+		data: {
+			quantity: 1,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			productId,
+			isChecked: true,
+			status: true,
+		},
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+};
+
+// READ
+
+// get CartItems
+export const getCartItems = async (prisma: prismaType) => {
+	const cartItems = await prisma.cartItem.findMany({
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+
+	return cartItems;
+};
+
+// get CartItem
+export const getCartItem = async (prisma: prismaType, cartId: string) => {
+	const cartItem = await prisma.cartItem.findUnique({
+		where: { id: cartId },
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+
+	return cartItem;
+};
+
+// get CartItem by Product Id
+export const getCartItemByProductId = async (prisma: prismaType, productId: string) => {
+	const cartItem = await prisma.cartItem.findFirst({
+		where: { productId },
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+
+	return cartItem;
+};
+
+// UPDATE
+
+// Increase Cart Item Quantity
+export const increaseCartItem = async (prisma: prismaType, cartId: string) => {
+	return await prisma.cartItem.update({
+		where: { id: cartId },
+		data: {
+			quantity: {
+				increment: 1,
+			},
+			updatedAt: new Date(),
+		},
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+};
+
+// Decrease Cart Item Quantity
+export const decreaseCartItem = async (prisma: prismaType, cartId: string) => {
+	return await prisma.cartItem.update({
+		where: { id: cartId },
+		data: {
+			quantity: {
+				decrement: 1,
+			},
+			updatedAt: new Date(),
+		},
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+};
+
+// set Cart Item Quantity
+export const setCartItemQuantity = async (
+	prisma: prismaType,
+	cartId: string,
+	newQuantity: number
+) => {
+	return await prisma.cartItem.update({
+		where: { id: cartId },
+		data: { quantity: newQuantity, updatedAt: new Date() },
+		select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+	});
+};
+
+// DELETE
+
+// delete Cart Item
+export const removeCartItem = async (prisma: prismaType, cartId: string) => {
+	return await prisma.cartItem.delete({
+		where: { id: cartId },
+	});
+};
+
 function createCartContext() {
-	const { getProductClient } = productContext;
 	const [cartItems, setCartItems] = createStore<CartItemProps[]>([]);
 	const [isLoading, setIsLoading] = createSignal<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = createSignal<boolean>(false);
@@ -343,8 +447,6 @@ function createCartContext() {
 		return;
 	};
 
-	const getCartQuantity = () => cartItems?.reduce((quantity, item) => item.quantity + quantity, 0);
-
 	const getCartItemClient = (id: string) => cartItems?.find((item) => item.productId === id);
 
 	const getCartItemQuantityByCartId = (cartId: string) =>
@@ -352,15 +454,6 @@ function createCartContext() {
 
 	const getCartItemQuantityByProductId = (productId: string) =>
 		cartItems?.find((item) => item.productId === productId)?.quantity || 0;
-
-	const getTotalPrice = () =>
-		cartItems?.length
-			? cartItems?.reduce(
-					(totalPrice, cartItem) =>
-						cartItem.quantity * Number(getProductClient(cartItem.productId)?.price) + totalPrice,
-					0
-			  )
-			: 0;
 
 	return {
 		cartItems,
@@ -376,11 +469,9 @@ function createCartContext() {
 		handleRemoveCartItem,
 		handleSetCartItemQuantityByCartItemId,
 		handleSetCartItemQuantityByProductId,
-		getCartQuantity,
 		getCartItemClient,
 		getCartItemQuantityByCartId,
 		getCartItemQuantityByProductId,
-		getTotalPrice,
 	};
 }
 export default createRoot(createCartContext);
