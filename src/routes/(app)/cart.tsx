@@ -3,6 +3,8 @@ import { Meta, Title, unstable_island, useRouteData } from "solid-start";
 
 import CartPage from "~/components/CartPage";
 import { prisma } from "~/server/db/client";
+import { getServerProductsData$ } from "~/services/ProductServices";
+import { getServerCartItemsData$ } from "~/services/CartServices";
 import { createServerData$ } from "solid-start/server";
 
 const AppProvider = unstable_island(() => import("../../context/AppProvider"));

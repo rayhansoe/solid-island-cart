@@ -4,6 +4,8 @@ import { Show } from "solid-js";
 import { prisma } from "~/server/db/client";
 
 import StoreSection from "~/components/StoreSection";
+import { getServerProductsData$ } from "~/services/ProductServices";
+import { getServerCartItemsData$ } from "~/services/CartServices";
 import { createServerData$ } from "solid-start/server";
 
 const AppProvider = unstable_island(() => import("../../context/AppProvider"));

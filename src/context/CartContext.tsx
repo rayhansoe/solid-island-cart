@@ -15,6 +15,7 @@ import server$ from "solid-start/server";
 // } from "~/services/CartServices";
 import { getProduct, updateProductPopularityLite, getProducts } from "~/services/ProductServices";
 import type { CartItemProps } from "~/types";
+import productContext from "./ProductContext";
 import { prisma } from "~/server/db/client";
 
 // const data: CartItemProps[] = await getCartItemsRPC$();
@@ -238,6 +239,7 @@ export const removeCartItems = async (prisma: prismaType) => {
 };
 
 function createCartContext() {
+	const { getProductClient } = productContext;
 	const [cartItems, setCartItems] = createStore<CartItemProps[]>([]);
 	const [isLoading, setIsLoading] = createSignal<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = createSignal<boolean>(false);
@@ -562,11 +564,24 @@ function createCartContext() {
 		return;
 	};
 
+	const getCartQuantity = () => cartItems?.reduce((quantity, item) => item.quantity + quantity, 0);
+
+	const getCartItemClient = (id: string) => cartItems?.find((item) => item.productId === id);
+
 	const getCartItemQuantityByCartId = (cartId: string) =>
 		cartItems?.find((item) => item.id === cartId)?.quantity || 0;
 
 	const getCartItemQuantityByProductId = (productId: string) =>
 		cartItems?.find((item) => item.productId === productId)?.quantity || 0;
+
+	const getTotalPrice = () =>
+		cartItems?.length
+			? cartItems?.reduce(
+					(totalPrice, cartItem) =>
+						cartItem.quantity * Number(getProductClient(cartItem.productId)?.price) + totalPrice,
+					0
+			  )
+			: 0;
 
 	return {
 		cartItems,
@@ -582,8 +597,11 @@ function createCartContext() {
 		handleRemoveCartItem,
 		handleSetCartItemQuantityByCartItemId,
 		handleSetCartItemQuantityByProductId,
+		getCartQuantity,
+		getCartItemClient,
 		getCartItemQuantityByCartId,
 		getCartItemQuantityByProductId,
+		getTotalPrice,
 	};
 }
 export default createRoot(createCartContext);
