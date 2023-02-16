@@ -341,6 +341,12 @@ function createCartContext() {
 		return;
 	};
 
+	const getCartItemQuantityByCartId = (cartId: string) =>
+		cartItems?.find((item) => item.id === cartId)?.quantity || 0;
+
+	const getCartItemQuantityByProductId = (productId: string) =>
+		cartItems?.find((item) => item.productId === productId)?.quantity || 0;
+
 	return {
 		cartItems,
 		isLoading,
@@ -355,6 +361,8 @@ function createCartContext() {
 		handleRemoveCartItem,
 		handleSetCartItemQuantityByCartItemId,
 		handleSetCartItemQuantityByProductId,
+		getCartItemQuantityByCartId,
+		getCartItemQuantityByProductId,
 	};
 }
 export default createRoot(createCartContext);

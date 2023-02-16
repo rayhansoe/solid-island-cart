@@ -1,23 +1,11 @@
 import type { VoidComponent } from "solid-js";
 import { Show } from "solid-js";
 import { Outlet, useRouteData } from "solid-start";
-import { createServerData$ } from "solid-start/server";
 import NavBar from "~/components/NavBar";
-import { prisma } from "~/server/db/client";
+import { getServerCartItemsData$ } from "~/services/CartServices";
 
 export function routeData() {
-	const cartItems = createServerData$(
-		async () => {
-			const cartItems = await prisma.cartItem.findMany({
-				select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
-			});
-
-			return cartItems;
-		},
-		{
-			deferStream: true,
-		}
-	);
+	const cartItems = getServerCartItemsData$();
 
 	return cartItems;
 }
