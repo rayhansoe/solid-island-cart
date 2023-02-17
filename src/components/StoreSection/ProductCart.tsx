@@ -74,6 +74,8 @@ export default function ProductCart(props: ProductCartProps) {
 				<Match when={cartItem()?.id}>
 					<div class='flex items-center gap-2 h-10'>
 						<button
+							title='Remove Cart Item'
+							aria-label='Remove Cart Item from Cart'
 							disabled={isRemoving() ? true : false || isLocalLoading()}
 							onClick={() => {
 								handleRemoveCartItem(props.id, setIsRemoving);
@@ -90,6 +92,7 @@ export default function ProductCart(props: ProductCartProps) {
 								viewBox='0 0 24 24'
 								stroke-width='1.5'
 								stroke='currentColor'
+								aria-hidden='true'
 								class='relative inline-flex w-6 h-6'
 							>
 								<path
@@ -104,6 +107,7 @@ export default function ProductCart(props: ProductCartProps) {
 								viewBox='0 0 24 24'
 								stroke-width='1.5'
 								stroke='currentColor'
+								aria-hidden='true'
 								class='hidden opacity-60 w-6 h-6 group-hover:absolute group-hover:inline-flex group-hover:animate-ping'
 							>
 								<path
@@ -116,6 +120,8 @@ export default function ProductCart(props: ProductCartProps) {
 						<span class='h-5 w-[1px] bg-gray-300' />
 						<div class='flex items-center gap-2'>
 							<button
+								title='Decrease Cart Item'
+								aria-label='Decrease Cart Item Quantity'
 								disabled={quantity() === 1 || isRemoving() || isLocalLoading()}
 								onClick={() => {
 									batch(() => {
@@ -134,6 +140,7 @@ export default function ProductCart(props: ProductCartProps) {
 									viewBox='0 0 24 24'
 									fill='currentColor'
 									class='w-5 h-5'
+									aria-hidden='true'
 								>
 									<path
 										fill-rule='evenodd'
@@ -145,6 +152,7 @@ export default function ProductCart(props: ProductCartProps) {
 
 							<input
 								class={`custom-input-number text-center flex items-center justify-center disabled:cursor-not-allowed`}
+								aria-label='Cart Item Quantity'
 								value={quantity()}
 								disabled={isRemoving() || isLocalLoading()}
 								style={{
@@ -170,6 +178,8 @@ export default function ProductCart(props: ProductCartProps) {
 							/>
 
 							<button
+								title='Increase Cart Item'
+								aria-label='Increase Cart Item Quantity'
 								disabled={
 									quantity() === getProductClient(props.id)?.stock
 										? true
@@ -191,6 +201,7 @@ export default function ProductCart(props: ProductCartProps) {
 									xmlns='http://www.w3.org/2000/svg'
 									viewBox='0 0 24 24'
 									fill='currentColor'
+									aria-hidden='true'
 									class='w-5 h-5'
 								>
 									<path

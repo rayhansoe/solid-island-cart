@@ -98,6 +98,8 @@ export default function CartItem(props: {
 								<div class='flex items-center gap-2 mb-2'>
 									{/* Remove Button */}
 									<button
+										title='Remove Cart Item'
+										aria-label='Remove Cart Item from Cart'
 										disabled={isRemoving() || isLocalLoading()}
 										onClick={() => {
 											handleRemoveCartItem(props?.cartItemProps.productId, setIsRemoving);
@@ -116,6 +118,7 @@ export default function CartItem(props: {
 											viewBox='0 0 24 24'
 											stroke-width='1.5'
 											stroke='currentColor'
+											aria-hidden='true'
 											class='relative inline-flex w-5 h-5 sm:w-6 sm:h-6'
 										>
 											<path
@@ -130,6 +133,7 @@ export default function CartItem(props: {
 											viewBox='0 0 24 24'
 											stroke-width='1.5'
 											stroke='currentColor'
+											aria-hidden='true'
 											class='hidden opacity-60 w-5 h-5 group-hover:absolute group-hover:inline-flex group-hover:animate-ping sm:w-6 sm:h-6'
 										>
 											<path
@@ -145,6 +149,8 @@ export default function CartItem(props: {
 									<div class='flex items-center gap-2'>
 										{/* Decrease Button */}
 										<button
+											title='Decrease Cart Item'
+											aria-label='Decrease Cart Item Quantity'
 											disabled={quantity() === 1 ? true : false || isRemoving() || isLocalLoading()}
 											onClick={() => {
 												batch(() => {
@@ -162,6 +168,7 @@ export default function CartItem(props: {
 												xmlns='http://www.w3.org/2000/svg'
 												viewBox='0 0 24 24'
 												fill='currentColor'
+												aria-hidden='true'
 												class='w-3 h-3 sm:w-5 sm:h-5'
 											>
 												<path
@@ -175,6 +182,7 @@ export default function CartItem(props: {
 										{/* Input Quantity */}
 										<input
 											disabled={isRemoving() || isLocalLoading()}
+											aria-label='Cart Item Quantity'
 											class='custom-input-number text-sm text-center flex items-center justify-center disabled:cursor-not-allowed sm:text-lg'
 											style={{
 												width: `${inputWidth()}px`,
@@ -201,6 +209,8 @@ export default function CartItem(props: {
 
 										{/* Increase Button */}
 										<button
+											title='Increase Cart Item'
+											aria-label='Increase Cart Item Quantity'
 											disabled={
 												quantity() ===
 												(props.products?.find(
@@ -226,6 +236,7 @@ export default function CartItem(props: {
 											<svg
 												xmlns='http://www.w3.org/2000/svg'
 												viewBox='0 0 24 24'
+												aria-hidden='true'
 												fill='currentColor'
 												class='w-3 h-3 sm:w-5 sm:h-5'
 											>
