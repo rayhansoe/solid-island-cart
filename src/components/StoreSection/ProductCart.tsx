@@ -66,7 +66,7 @@ export default function ProductCart(props: ProductCartProps) {
 					<button
 						disabled={isReStocking() ? true : false}
 						onClick={() => handleReStockProduct(props.id, setIsReStocking)}
-						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
+						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-550 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
 					>
 						+Restock
 					</button>
@@ -195,7 +195,7 @@ export default function ProductCart(props: ProductCartProps) {
 								onKeyUp={(e) => {
 									e.preventDefault();
 								}}
-								class='flex items-center justify-center rounded-full w-7 h-7 bg-blue-500 text-xl font-bold text-white hover:bg-blue-400 active:bg-blue-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
+								class='flex items-center justify-center rounded-full w-7 h-7 bg-blue-550 text-xl font-bold text-white hover:bg-blue-400 active:bg-blue-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
 							>
 								<svg
 									xmlns='http://www.w3.org/2000/svg'
@@ -221,7 +221,7 @@ export default function ProductCart(props: ProductCartProps) {
 							setIsIncreasing(true);
 							handleIncreaseCartItem(props.id, setIsIncreasing);
 						}}
-						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
+						class='flex items-center justify-center rounded-md h-10 shadow font-semibold bg-blue-550 text-white hover:bg-blue-400 active:bg-blue-300 py-2 px-3 disabled:bg-blue-100 disabled:text-gray-500 disabled:cursor-not-allowed'
 					>
 						+Add to Cart
 					</button>

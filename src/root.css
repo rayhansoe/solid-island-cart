@@ -91,7 +91,7 @@
 @layer components {
 	.cart-button {
 		&:hover {
-			@apply bg-blue-500 border-blue-300;
+			@apply bg-blue-550 border-blue-300;
 			svg {
 				@apply text-white;
 			}

@@ -13,7 +13,7 @@ export default function NavBar(props: { cartItems: CartItemProps[] }) {
 					class='relative flex items-center justify-center p-3 rounded-full border border-gray-200 drop-shadow-md cart-button hover:drop-shadow-lg'
 				>
 					<svg
-						class='w-6 h-6 text-blue-500 '
+						class='w-6 h-6 text-blue-550 '
 						xmlns='http://www.w3.org/2000/svg'
 						viewBox='0 0 24 24'
 						fill='currentColor'
