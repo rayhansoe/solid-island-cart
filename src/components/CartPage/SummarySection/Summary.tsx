@@ -58,7 +58,7 @@ export default function Summary(props: { cartItems: CartItemProps[]; products: P
 						onClick={async () => {
 							await handleCreateTransaction();
 						}}
-						class='w-full px-2 py-3 bg-blue-550 text-white rounded-md font-semibold hover:bg-blue-400 active:bg-blue-300 disabled:cursor-not-allowed disabled:bg-blue-100 disabled:text-gray-500'
+						class='w-full px-2 py-3 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-400 active:bg-blue-300 disabled:cursor-not-allowed disabled:bg-blue-100 disabled:text-gray-500'
 					>
 						Checkout
 					</button>

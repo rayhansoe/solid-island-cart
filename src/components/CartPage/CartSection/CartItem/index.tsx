@@ -228,7 +228,7 @@ export default function CartItem(props: {
 										onKeyUp={(e) => {
 											e.preventDefault();
 										}}
-										class='flex items-center justify-center rounded-full w-6 h-6 bg-blue-550 text-xl font-bold text-white hover:bg-blue-400 active:bg-blue-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed sm:w-7 sm:h-7'
+										class='flex items-center justify-center rounded-full w-6 h-6 bg-blue-500 text-xl font-bold text-white hover:bg-blue-400 active:bg-blue-300 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed sm:w-7 sm:h-7'
 									>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
