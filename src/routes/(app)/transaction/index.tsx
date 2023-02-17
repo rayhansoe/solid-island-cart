@@ -34,68 +34,72 @@ export default function Page() {
 						{(transaction) => {
 							return (
 								<>
-									<details class='p-4 w-full shadow rounded my-1 border-gray-100 border'>
-										<summary
-											class={`flex flex-col gap-4 w-full ${
-												(transactionsItems()?.filter(
-													(item) => item.transactionId === transaction.id
-												).length || 0) > 1
-													? "cursor-pointer"
-													: ""
-											}`}
-										>
-											<div class='flex items-center gap-4'>
-												<span class='text-sm font-bold text-green-700 bg-green-200 py-1 px-2 rounded'>
-													Success
-												</span>
-												<span class='text-sm font-medium text-gray-600'>
-													{transaction.createdAt.toDateString()}
-												</span>
-												<span class='text-sm text-slate-500 hidden sm:block'>{`INV/${transaction.createdAt.toLocaleDateString()}/${transaction.id.toUpperCase()}`}</span>
-											</div>
-											<For
-												each={transactionsItems()
-													?.filter((item) => item.transactionId === transaction.id)
-													.splice(0, 1)}
+									<div class='flex flex-col gap-2 p-4 w-full shadow rounded my-1 border-gray-100 border hover:shadow-lg'>
+										<details class='custom-details'>
+											<summary
+												class={`flex flex-col gap-4 w-full ${
+													(transactionsItems()?.filter(
+														(item) => item.transactionId === transaction.id
+													).length || 0) > 1
+														? "cursor-pointer"
+														: ""
+												}`}
 											>
-												{(item) => (
-													<>
-														<div class='flex w-full justify-between'>
-															<div class='flex gap-3 w-60 sm:w-full'>
-																<img
-																	class='w-24 h-24 object-cover rounded-lg'
-																	src={getProduct(item.productId)?.imgUrl || ""}
-																	alt={getProduct(item.productId)?.name}
-																	loading='lazy'
-																/>
-																<div class='flex flex-col gap-2 w-3/5'>
-																	<span class='text-lg font-medium truncate'>
-																		{getProduct(item.productId)?.name}
+												<div class='flex items-center gap-4'>
+													<span class='text-sm font-bold text-green-700 bg-green-200 py-1 px-2 rounded'>
+														Success
+													</span>
+													<span class='text-sm font-medium text-gray-600'>
+														{transaction.createdAt.toDateString()}
+													</span>
+													<span class='text-sm text-slate-500 hidden sm:block'>{`INV/${transaction.createdAt.toLocaleDateString()}/${transaction.id.toUpperCase()}`}</span>
+												</div>
+												<For
+													each={transactionsItems()
+														?.filter((item) => item.transactionId === transaction.id)
+														.splice(0, 1)}
+												>
+													{(item) => (
+														<>
+															<div class='flex w-full justify-between'>
+																<div class='flex gap-3 w-60 sm:w-full'>
+																	<img
+																		class='w-24 h-24 object-cover rounded-lg'
+																		src={getProduct(item.productId)?.imgUrl || ""}
+																		alt={getProduct(item.productId)?.name}
+																		loading='lazy'
+																	/>
+																	<div class='flex flex-col gap-2 w-3/5'>
+																		<span class='text-lg font-medium truncate'>
+																			{getProduct(item.productId)?.name}
+																		</span>
+																		<p class='text-sm text-gray-600'>
+																			{item.quantity}pcs * ${getProduct(item.productId)?.price}
+																		</p>
+																		<Show
+																			when={
+																				(transactionsItems()?.filter(
+																					(item) => item.transactionId === transaction.id
+																				).length || 0) > 1
+																			}
+																		>
+																			<p class='text-sm text-gray-800'>{`+${
+																				transaction.quantities - 1
+																			} more products`}</p>
+																		</Show>
+																	</div>
+																</div>
+																<div class='flex flex-col'>
+																	<span class='text-xl font-semibold'>
+																		${transaction.totalPrice}
 																	</span>
-																	<p class='text-sm text-gray-600'>
-																		{item.quantity}pcs * ${getProduct(item.productId)?.price}
-																	</p>
-																	<Show
-																		when={
-																			(transactionsItems()?.filter(
-																				(item) => item.transactionId === transaction.id
-																			).length || 0) > 1
-																		}
-																	>
-																		<p class='text-sm text-gray-800'>{`+${
-																			transaction.quantities - 1
-																		} more products`}</p>
-																	</Show>
 																</div>
 															</div>
-															<div class='flex flex-col'>
-																<span class='text-xl font-semibold'>${transaction.totalPrice}</span>
-															</div>
-														</div>
-													</>
-												)}
-											</For>
-										</summary>
+														</>
+													)}
+												</For>
+											</summary>
+										</details>
 										<Show
 											when={
 												(transactionsItems()?.filter(
@@ -103,49 +107,51 @@ export default function Page() {
 												).length || 0) > 1
 											}
 										>
-											<span class='block h-[1px] w-full bg-gray-200 my-4' />
-											<ul class='flex flex-col gap-4'>
-												<For
-													each={transactionsItems()?.filter(
-														(item) => item.transactionId === transaction.id
-													)}
-												>
-													{(item) => {
-														const p = getProduct(item.productId);
-														return (
-															<>
-																{p ? (
-																	<li class='flex w-full justify-between'>
-																		<div class='flex gap-3 w-60 sm:w-full'>
-																			<img
-																				class='w-24 h-24 object-cover rounded-lg'
-																				src={p.imgUrl || ""}
-																				alt={p.name}
-																				loading='lazy'
-																			/>
-																			<div class='flex flex-col gap-2 w-3/5'>
-																				<span class='text-lg font-medium truncate'>{p.name}</span>
-																				<p class='text-sm text-gray-600'>
-																					{item.quantity}pcs * ${p.price}
-																				</p>
+											<div class='flex flex-col gap-2 h-auto max-h-0 overflow-hidden transition-all duration-500 ease-in-out delay-[0s] details-content'>
+												<span class='block h-[1px] w-full bg-gray-200 my-4' />
+												<ul class='flex flex-col gap-4'>
+													<For
+														each={transactionsItems()?.filter(
+															(item) => item.transactionId === transaction.id
+														)}
+													>
+														{(item) => {
+															const p = getProduct(item.productId);
+															return (
+																<>
+																	{p ? (
+																		<li class='flex w-full justify-between'>
+																			<div class='flex gap-3 w-60 sm:w-full'>
+																				<img
+																					class='w-24 h-24 object-cover rounded-lg'
+																					src={p.imgUrl || ""}
+																					alt={p.name}
+																					loading='lazy'
+																				/>
+																				<div class='flex flex-col gap-2 w-3/5'>
+																					<span class='text-lg font-medium truncate'>{p.name}</span>
+																					<p class='text-sm text-gray-600'>
+																						{item.quantity}pcs * ${p.price}
+																					</p>
+																				</div>
 																			</div>
-																		</div>
-																		<div class='flex flex-col'>
-																			<span class='text-xl font-semibold'>
-																				${p ? p.price * item.quantity : ""}
-																			</span>
-																		</div>
-																	</li>
-																) : (
-																	""
-																)}
-															</>
-														);
-													}}
-												</For>
-											</ul>
+																			<div class='flex flex-col'>
+																				<span class='text-xl font-semibold'>
+																					${p ? p.price * item.quantity : ""}
+																				</span>
+																			</div>
+																		</li>
+																	) : (
+																		""
+																	)}
+																</>
+															);
+														}}
+													</For>
+												</ul>
+											</div>
 										</Show>
-									</details>
+									</div>
 								</>
 							);
 						}}

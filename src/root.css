@@ -128,9 +128,11 @@
 	}
 
 	.custom-details {
-		@apply p-4;
-		summary {
-			@apply shadow-md rounded p-4 list-none;
+		&[open] ~ .details-content {
+			max-height: 200vh;
+			overflow: hidden;
+			transition: all 0.5s ease;
+			transition-delay: 0s;
 		}
 	}
 }
