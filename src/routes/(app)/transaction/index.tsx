@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js";
-import { unstable_island, useRouteData } from "solid-start";
+import { Title, unstable_island, useRouteData } from "solid-start";
 import { getServerCartItemsData$ } from "~/services/CartServices";
 import { getServerProductsData$ } from "~/services/ProductServices";
 import {
@@ -28,8 +28,12 @@ export default function Page() {
 
 	return (
 		<Show when={transactions()?.length && transactionsItems()?.length && products()?.length}>
+			<Title>Transactions Page</Title>
 			<AppProvider cartItems={cartItems()} products={products()}>
-				<div class='container mx-auto mt-4 flex flex-col gap-2 sm:max-w-[640px] md:max-w-3xl lg:max-w-5xl xl:max-w-7xl'>
+				<main class='container mx-auto mt-4 flex flex-col gap-2 px-4 sm:max-w-[640px] md:max-w-3xl lg:max-w-5xl xl:max-w-7xl'>
+					<div class='flex items-center gap-2'>
+						<h1 class='text-2xl font-semibold lg:text-3xl'>Transactions</h1>
+					</div>
 					<For each={transactions()}>
 						{(transaction) => {
 							return (
@@ -156,7 +160,7 @@ export default function Page() {
 							);
 						}}
 					</For>
-				</div>
+				</main>
 			</AppProvider>
 		</Show>
 	);

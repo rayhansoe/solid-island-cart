@@ -1,5 +1,6 @@
 import { For, Show } from "solid-js";
 import type { RouteDataArgs } from "solid-start";
+import { Title } from "solid-start";
 import { unstable_island } from "solid-start";
 import { A } from "solid-start";
 import { useRouteData } from "solid-start";
@@ -36,8 +37,11 @@ export default function Page() {
 
 	return (
 		<Show when={transaction()?.id && transactionItems()?.length && products()?.length}>
+			<Title>{`New Transaction at ${
+				transaction()?.createdAt
+			} INV/${transaction()?.createdAt.toLocaleDateString()}/${transaction()?.id.toUpperCase()}`}</Title>
 			<AppProvider cartItems={cartItems()} products={products()}>
-				<div class='container mx-auto mt-4 flex flex-col gap-2 sm:max-w-[640px] md:max-w-3xl lg:max-w-5xl xl:max-w-7xl'>
+				<main class='container mx-auto mt-4 flex flex-col gap-2 px-4 sm:max-w-[640px] md:max-w-3xl lg:max-w-5xl xl:max-w-7xl'>
 					<A href='/transaction' class='hover:underline'>
 						{"<"} Transactions
 					</A>
@@ -149,7 +153,7 @@ export default function Page() {
 							</div>
 						</Show>
 					</div>
-				</div>
+				</main>
 			</AppProvider>
 		</Show>
 	);
