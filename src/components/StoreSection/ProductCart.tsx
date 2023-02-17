@@ -15,9 +15,10 @@ export default function ProductCart(props: ProductCartProps) {
 	const [isIncreasing, setIsIncreasing] = createSignal<boolean>(false);
 	const [isReStocking, setIsReStocking] = createSignal<boolean>(false);
 	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
+	const [isLocalLoading, setIsLocalLoading] = createSignal<boolean>(false);
 	const {
+		getCartItemClient,
 		getCartItemQuantityByProductId,
-		setCartItems,
 		setIsLoading,
 		handleIncreaseCartItem,
 		handleRemoveCartItem,
@@ -31,14 +32,21 @@ export default function ProductCart(props: ProductCartProps) {
 
 	const getProductStock = () => getProductClient(props.id)?.stock || 0;
 
+	const [cartItem, setCartItem] = createSignal(
+		props.serverCartItems.find((i) => i.productId === props.id)
+	);
 	const [quantity, setQuantity] = createSignal<number>(getCartItemQuantityByProductIdServer());
 	const [stock, setStock] = createSignal<number>(props.stock);
 
 	const update = () => {
-		handleSetCartItemQuantityByProductId(props.id, quantity());
+		handleSetCartItemQuantityByProductId(props.id, quantity(), setIsLocalLoading);
 	};
 
 	const debouncedUpdate = debounce(update, 1000);
+
+	createEffect(() => setCartItem(props.serverCartItems.find((i) => i.productId === props.id)));
+
+	createEffect(() => setCartItem(getCartItemClient(props.id)));
 
 	createEffect(() =>
 		setQuantity(getCartItemQuantityByProductIdServer() || getCartItemQuantityByProductId(props.id))
@@ -54,7 +62,7 @@ export default function ProductCart(props: ProductCartProps) {
 	return (
 		<>
 			<Switch>
-				<Match when={!props.stock}>
+				<Match when={!props.stock || !stock()}>
 					<button
 						disabled={isReStocking() ? true : false}
 						onClick={() => handleReStockProduct(props.id, setIsReStocking)}
@@ -63,18 +71,18 @@ export default function ProductCart(props: ProductCartProps) {
 						+Restock
 					</button>
 				</Match>
-				<Match when={quantity() && stock()}>
+				<Match when={cartItem()?.id}>
 					<div class='flex items-center gap-2 h-10'>
 						<button
-							disabled={isRemoving() ? true : false}
+							disabled={isRemoving() ? true : false || isLocalLoading()}
 							onClick={() => {
 								handleRemoveCartItem(props.id, setIsRemoving);
 								batch(() => {
 									setIsLoading(true);
-									setCartItems((items) => items.filter((item) => item.productId !== props.id));
+									// setCartItems((items) => items.filter((item) => item.productId !== props.id));
 								});
 							}}
-							class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:text-gray-400 disabled:hover:text-gray-400'
+							class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:text-gray-400 disabled:hover:text-gray-400 disabled:cursor-not-allowed'
 						>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
@@ -108,7 +116,7 @@ export default function ProductCart(props: ProductCartProps) {
 						<span class='h-5 w-[1px] bg-gray-300' />
 						<div class='flex items-center gap-2'>
 							<button
-								disabled={quantity() !== 1 ? false : true}
+								disabled={quantity() === 1 || isRemoving() || isLocalLoading()}
 								onClick={() => {
 									batch(() => {
 										setQuantity((q) => q - 1);
@@ -136,8 +144,9 @@ export default function ProductCart(props: ProductCartProps) {
 							</button>
 
 							<input
-								class={`custom-input-number text-center flex items-center justify-center `}
+								class={`custom-input-number text-center flex items-center justify-center disabled:cursor-not-allowed`}
 								value={quantity()}
+								disabled={isRemoving() || isLocalLoading()}
 								style={{
 									width: `${inputWidth()}px`,
 								}}
@@ -161,7 +170,11 @@ export default function ProductCart(props: ProductCartProps) {
 							/>
 
 							<button
-								disabled={quantity() === getProductClient(props.id)?.stock ? true : false}
+								disabled={
+									quantity() === getProductClient(props.id)?.stock
+										? true
+										: false || isRemoving() || isLocalLoading()
+								}
 								onClick={() => {
 									batch(() => {
 										setQuantity((q) => q + 1);
@@ -190,7 +203,7 @@ export default function ProductCart(props: ProductCartProps) {
 						</div>
 					</div>
 				</Match>
-				<Match when={props.stock || getProductClient(props.id)?.stock}>
+				<Match when={!cartItem()?.id}>
 					<button
 						disabled={isIncreasing() ? true : false}
 						onClick={() => {

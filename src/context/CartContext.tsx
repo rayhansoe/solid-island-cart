@@ -381,6 +381,7 @@ function createCartContext() {
 
 	const handleRemoveCartItem = async (productId: string, setIsRemoving: Setter<boolean>) => {
 		setIsSubmitting(true);
+		setIsRemoving(true);
 		const response = await removeFromCartItem$(productId);
 
 		// fail to remove item
@@ -393,7 +394,18 @@ function createCartContext() {
 			return;
 		}
 
+		if (response.find((item) => item.productId === productId)?.id) {
+			batch(() => {
+				setCartItems(reconcile(response));
+				setIsLoading(false);
+				setIsSubmitting(false);
+				setIsRemoving(false);
+			});
+			return;
+		}
+
 		batch(() => {
+			setCartItems((items) => items.filter((item) => item.productId !== productId));
 			setCartItems(reconcile(response));
 			setIsLoading(false);
 			setIsSubmitting(false);
@@ -403,8 +415,13 @@ function createCartContext() {
 		return;
 	};
 
-	const handleSetCartItemQuantityByProductId = async (productId: string, quantity: number) => {
+	const handleSetCartItemQuantityByProductId = async (
+		productId: string,
+		quantity: number,
+		setIsLocalLoading: Setter<boolean>
+	) => {
 		setIsSubmitting(true);
+		setIsLocalLoading(true);
 		const response = await setCartItemQuantityByProductId$(productId, quantity);
 
 		// if item has been removed
@@ -412,6 +429,7 @@ function createCartContext() {
 			batch(() => {
 				setIsLoading(false);
 				setIsSubmitting(false);
+				setIsLocalLoading(false);
 			});
 			return;
 		}
@@ -420,13 +438,19 @@ function createCartContext() {
 			setCartItems(reconcile(response));
 			setIsLoading(false);
 			setIsSubmitting(false);
+			setIsLocalLoading(false);
 		});
 
 		return;
 	};
 
-	const handleSetCartItemQuantityByCartItemId = async (cartId: string, quantity: number) => {
+	const handleSetCartItemQuantityByCartItemId = async (
+		cartId: string,
+		quantity: number,
+		setIsLocalLoading: Setter<boolean>
+	) => {
 		setIsSubmitting(true);
+		setIsLocalLoading(true);
 		const response = await setCartItemQuantityByCartItemId$(cartId, quantity);
 
 		// if item has been removed
@@ -434,6 +458,7 @@ function createCartContext() {
 			batch(() => {
 				setIsLoading(false);
 				setIsSubmitting(false);
+				setIsLocalLoading(false);
 			});
 			return;
 		}
@@ -442,6 +467,7 @@ function createCartContext() {
 			setCartItems(reconcile(response));
 			setIsLoading(false);
 			setIsSubmitting(false);
+			setIsLocalLoading(false);
 		});
 
 		return;

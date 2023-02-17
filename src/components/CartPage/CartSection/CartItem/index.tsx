@@ -12,20 +12,16 @@ export default function CartItem(props: {
 	products: ProductProps[];
 }) {
 	const [isRemoving, setIsRemoving] = createSignal<boolean>(false);
+	const [isLocalLoading, setIsLocalLoading] = createSignal<boolean>(false);
 	const [quantity, setQuantity] = createSignal<number>(props?.cartItemProps.quantity || 0);
-	const {
-		setCartItems,
-		setIsLoading,
-		handleRemoveCartItem,
-		handleSetCartItemQuantityByCartItemId,
-	} = CartContext;
+	const { setIsLoading, handleRemoveCartItem, handleSetCartItemQuantityByCartItemId } = CartContext;
 
 	const { products } = ProductContext;
 	const [stock, setStock] = createSignal<number>(0);
 
 	const update = () => {
 		if (props?.cartItemProps.id && quantity()) {
-			handleSetCartItemQuantityByCartItemId(props?.cartItemProps.id, quantity());
+			handleSetCartItemQuantityByCartItemId(props?.cartItemProps.id, quantity(), setIsLocalLoading);
 		}
 	};
 
@@ -102,17 +98,17 @@ export default function CartItem(props: {
 								<div class='flex items-center gap-2 mb-2'>
 									{/* Remove Button */}
 									<button
-										disabled={isRemoving() ? true : false}
+										disabled={isRemoving() || isLocalLoading()}
 										onClick={() => {
 											handleRemoveCartItem(props?.cartItemProps.productId, setIsRemoving);
 											batch(() => {
 												setIsLoading(true);
-												setCartItems((items) =>
-													items.filter((item) => item.id !== props?.cartItemProps.id)
-												);
+												// setCartItems((items) =>
+												// 	items.filter((item) => item.id !== props?.cartItemProps.id)
+												// );
 											});
 										}}
-										class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:hover:text-gray-400 disabled:text-gray-400'
+										class='flex items-center justify-center text-gray-400 hover:text-red-400 group disabled:hover:cursor-not-allowed disabled:hover:text-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed'
 									>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
@@ -149,7 +145,7 @@ export default function CartItem(props: {
 									<div class='flex items-center gap-2'>
 										{/* Decrease Button */}
 										<button
-											disabled={quantity() === 1 ? true : false}
+											disabled={quantity() === 1 ? true : false || isRemoving() || isLocalLoading()}
 											onClick={() => {
 												batch(() => {
 													setQuantity((q) => q - 1);
@@ -178,7 +174,8 @@ export default function CartItem(props: {
 
 										{/* Input Quantity */}
 										<input
-											class='custom-input-number text-sm text-center flex items-center justify-center sm:text-lg'
+											disabled={isRemoving() || isLocalLoading()}
+											class='custom-input-number text-sm text-center flex items-center justify-center disabled:cursor-not-allowed sm:text-lg'
 											style={{
 												width: `${inputWidth()}px`,
 											}}
@@ -212,7 +209,7 @@ export default function CartItem(props: {
 													products?.find((product) => product.id === props?.cartItemProps.productId)
 														?.stock)
 													? true
-													: false
+													: false || isRemoving() || isLocalLoading()
 											}
 											onClick={() => {
 												batch(() => {
