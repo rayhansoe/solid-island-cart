@@ -1,7 +1,6 @@
 import { unstable_island } from "solid-start";
 
 const NavItem = unstable_island(() => import("./NavItem"));
-const Counter = unstable_island(() => import("./Counter"));
 
 const NavMenu = () => {
 	return (
