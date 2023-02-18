@@ -15,9 +15,6 @@ const NavMenu = () => {
 			<li>
 				<NavItem path='/transaction'>Transaction</NavItem>
 			</li>
-			<li>
-				<Counter />
-			</li>
 		</ul>
 	);
 };
