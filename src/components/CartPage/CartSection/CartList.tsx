@@ -4,7 +4,7 @@ import { createEffect, For, Show } from "solid-js";
 import CartContext from "~/context/CartContext";
 
 import autoAnimate from "@formkit/auto-animate";
-import CartItem from "../CartItem";
+import CartItem from "./CartItem";
 import type { CartItemProps, ProductProps } from "~/types";
 
 export default function CartList(props: { cartItems: CartItemProps[]; products: ProductProps[] }) {
