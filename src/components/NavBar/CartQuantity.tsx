@@ -1,4 +1,4 @@
-import { createEffect, createSignal, Show } from "solid-js";
+import { createComputed, createSignal, Show } from "solid-js";
 import CartContext from "~/context/CartContext";
 import type { CartItemProps } from "~/types";
 
@@ -9,7 +9,7 @@ const CartQuantity = (props: { cartItems: CartItemProps[] }) => {
 		props.cartItems?.reduce((quantity, item) => item.quantity + quantity, 0)
 	);
 
-	createEffect(() =>
+	createComputed(() =>
 		setQuantity(cartItems?.reduce((quantity, item) => item.quantity + quantity, 0))
 	);
 	return (

@@ -52,7 +52,7 @@ export const getTransactions = async (prisma: prismaType) => {
 export const getServerTransactionsData$ = () =>
 	createServerData$(
 		async () => {
-			return await prisma.transaction.findMany();
+			return await prisma.transaction.findMany({ orderBy: { createdAt: "asc" } });
 		},
 		{
 			deferStream: true,

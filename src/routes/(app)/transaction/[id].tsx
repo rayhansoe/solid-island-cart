@@ -138,7 +138,7 @@ export default function Page() {
 													</div>
 													<div class='flex flex-col'>
 														<span class='text-xl font-semibold'>
-															${p?.price || 0 * item.quantity}
+															${p?.price && p.price * item.quantity}
 														</span>
 													</div>
 												</li>

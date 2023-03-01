@@ -51,6 +51,7 @@ export const getServerCartItemsData$ = () =>
 		async () => {
 			const cartItems = await prisma.cartItem.findMany({
 				select: { id: true, isChecked: true, productId: true, quantity: true, status: true },
+				orderBy: { createdAt: "asc" },
 			});
 
 			return cartItems;

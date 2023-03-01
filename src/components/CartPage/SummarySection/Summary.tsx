@@ -1,5 +1,5 @@
 /* eslint-disable solid/reactivity */
-import { createEffect, createSignal, Show } from "solid-js";
+import { createComputed, createEffect, createSignal, Show } from "solid-js";
 import CartContext from "~/context/CartContext";
 import ProductContext from "~/context/ProductContext";
 import TransactionContext from "~/context/TransactionContext";
@@ -21,7 +21,7 @@ export default function Summary(props: { cartItems: CartItemProps[]; products: P
 		)
 	);
 
-	createEffect(() => {
+	createComputed(() => {
 		setSum(
 			props.cartItems?.reduce(
 				(totalPrice, cartItem) =>

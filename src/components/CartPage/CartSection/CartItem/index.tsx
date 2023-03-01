@@ -1,6 +1,6 @@
 /* eslint-disable solid/reactivity */
 import { debounce } from "@solid-primitives/scheduled";
-import { batch, createEffect, createSignal, Show } from "solid-js";
+import { batch, createComputed, createSignal, Show } from "solid-js";
 import CartContext from "~/context/CartContext";
 import ProductContext from "~/context/ProductContext";
 import type { CartItemProps, ProductProps } from "~/types";
@@ -27,11 +27,11 @@ export default function CartItem(props: {
 
 	const debouncedUpdate = debounce(update, 1000);
 
-	createEffect(() =>
+	createComputed(() =>
 		setStock(props.products.find((p) => p.id === props.cartItemProps.productId)?.stock || 0)
 	);
 
-	createEffect(() =>
+	createComputed(() =>
 		setStock(products.find((p) => p.id === props.cartItemProps.productId)?.stock || 0)
 	);
 
